@@ -1,0 +1,115 @@
+﻿using ArkSavegameToolkitNet.Domain.Internal;
+using ArkSavegameToolkitNet.Types;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ArkSavegameToolkitNet.Domain
+{
+    public class ArkStructureCropPlot : ArkStructure
+    {
+        private static readonly ArkName _cropPhaseFertilizerCache = ArkName.Create("CropPhaseFertilizerCache");
+        private static readonly ArkName _waterAmount = ArkName.Create("WaterAmount");
+        private static readonly ArkName _plantedCrop = ArkName.Create("PlantedCrop");
+
+        public ArkStructureCropPlot() : base()
+        {
+        }
+
+        public ArkStructureCropPlot(IGameObject structure, ISaveState saveState) : base(structure, saveState)
+        {
+            FertilizerAmount = structure.GetPropertyValue<float?>(_cropPhaseFertilizerCache);
+            WaterAmount = structure.GetPropertyValue<float>(_waterAmount);
+
+            var plantedCropBlueprintGeneratedClass = structure.GetPropertyValue<ObjectReference>(_plantedCrop)?.ObjectString?.Token;
+            PlantedCropClassName = plantedCropBlueprintGeneratedClass?.SubstringAfterLast('.');
+        }
+
+        public float? FertilizerAmount { get; set; }
+        public float WaterAmount { get; set; }
+        public string PlantedCropClassName { get; set; }
+    }
+}
+
+//[
+//  {
+//    "class": "CropPlotLarge_SM_C",
+//    "count": 12,
+//    "props": [
+//      "bHasResetDecayTime (Boolean)",
+//      "bIsFertilized (Boolean)",
+//      "bIsLocked (Boolean)",
+//      "bIsWatered (Boolean) [*]",
+//      "CropPhaseFertilizerCache (Single)",
+//      "CropRefreshInterval (Single)",
+//      "CurrentCropPhase (ArkByteValue)",
+//      "Health (Single) [*]",
+//      "IrrigationWaterTap (ObjectReference) [*]",
+//      "LastCropRefreshTime (Double)",
+//      "LastEnterStasisTime (Double)",
+//      "LastInAllyRangeTime (Double)",
+//      "MaxHealth (Single)",
+//      "MyCropStructure (ObjectReference)",
+//      "MyInventoryComponent (ObjectReference)",
+//      "OriginalCreationTime (Double)",
+//      "OwnerName (String)",
+//      "PlacedOnFloorStructure (ObjectReference) [*]",
+//      "PlantedCrop (ObjectReference)",
+//      "StructuresPlacedOnFloor (ArkArrayObjectReference)",
+//      "TargetingTeam (Int32)",
+//      "WaterAmount (Single)"
+//    ]
+//  },
+//  {
+//    "class": "CropPlotMedium_SM_C",
+//    "count": 34,
+//    "props": [
+//      "bHasFruitItems (Boolean)",
+//      "bHasResetDecayTime (Boolean)",
+//      "bIsFertilized (Boolean) [*]",
+//      "bIsSeeded (Boolean) [*]",
+//      "bIsWatered (Boolean)",
+//      "CropPhaseFertilizerCache (Single) [*]",
+//      "CropRefreshInterval (Single)",
+//      "CurrentCropPhase (ArkByteValue) [*]",
+//      "IrrigationWaterTap (ObjectReference)",
+//      "LastCropRefreshTime (Double)",
+//      "LastEnterStasisTime (Double)",
+//      "LastInAllyRangeTime (Double)",
+//      "MaxHealth (Single)",
+//      "MyInventoryComponent (ObjectReference)",
+//      "NumGreenHouseStructures (ArkByteValue)",
+//      "OriginalCreationTime (Double)",
+//      "OwnerName (String)",
+//      "PlacedOnFloorStructure (ObjectReference)",
+//      "PlantedCrop (ObjectReference) [*]",
+//      "TargetingTeam (Int32)",
+//      "WaterAmount (Single)"
+//    ]
+//  },
+//  {
+//    "class": "CropPlotSmall_SM_C",
+//    "count": 102,
+//    "props": [
+//      "bHasFruitItems (Boolean) [*]",
+//      "bHasResetDecayTime (Boolean)",
+//      "bIsSeeded (Boolean) [*]",
+//      "bIsWatered (Boolean)",
+//      "CropRefreshInterval (Single)",
+//      "IrrigationWaterTap (ObjectReference)",
+//      "LastCropRefreshTime (Double)",
+//      "LastEnterStasisTime (Double)",
+//      "LastInAllyRangeTime (Double)",
+//      "MaxHealth (Single)",
+//      "MyInventoryComponent (ObjectReference)",
+//      "NumGreenHouseStructures (ArkByteValue)",
+//      "OriginalCreationTime (Double)",
+//      "OwnerName (String)",
+//      "PlacedOnFloorStructure (ObjectReference)",
+//      "TargetingTeam (Int32)",
+//      "WaterAmount (Single)"
+//    ]
+//  }
+//]
