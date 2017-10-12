@@ -18,6 +18,7 @@ namespace ArkSavegameToolkitNet.Arrays
         public ArkArrayStruct(ArkArchive archive, int dataSize)
         {
             var size = archive.GetInt();
+            Capacity = size;
 
             ArkName structType;
             if (size * 4 + 4 == dataSize)
@@ -64,10 +65,9 @@ namespace ArkSavegameToolkitNet.Arrays
         //    return size;
         //}
 
-        public void CollectNames(ISet<string> nameTable)
-        {
-            foreach(var spl in this) spl.CollectNames(nameTable);
-        }
-
+        //public void CollectNames(ISet<string> nameTable)
+        //{
+        //    foreach(var spl in this) spl.CollectNames(nameTable);
+        //}
     }
 }

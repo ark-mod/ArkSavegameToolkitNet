@@ -16,18 +16,44 @@ namespace ArkSavegameToolkitNet.Domain
     {
         private readonly string _saveFilePath;
         private readonly ArkClusterDataBase _clusterData;
+        private readonly int? _savegameMaxDegreeOfParallelism;
+        private readonly bool _loadOnlyPropertiesInDomain;
         private dynamic[] _newData;
 
-        public ArkGameData(string saveFilePath, string clusterSavePath = null)
+        private static readonly ArkName _myCharacterStatusComponent = ArkName.Create("MyCharacterStatusComponent");
+        private static readonly ArkName _myData = ArkName.Create("MyData");
+        private static readonly ArkName _playerDataID = ArkName.Create("PlayerDataID");
+        private static readonly ArkName _linkedPlayerDataID = ArkName.Create("LinkedPlayerDataID");
+        private static readonly ArkName _uniqueID = ArkName.Create("UniqueID");
+
+        internal static readonly ArkNameTree _dependencies = new ArkNameTree
+        {
+            { _myCharacterStatusComponent, null },
+            {
+                _myData,
+                new ArkNameTree
+                {
+                    { _playerDataID, null },
+                    { _uniqueID, null }
+                }
+            },
+            { _linkedPlayerDataID, null }
+        };
+
+        public ArkGameData(string saveFilePath, string clusterSavePath = null, int? savegameMaxDegreeOfParallelism = null, bool loadOnlyPropertiesInDomain = false)
         {
             _saveFilePath = saveFilePath;
             _clusterData = !string.IsNullOrEmpty(clusterSavePath) ? new ArkClusterData(clusterSavePath) : null;
+            _savegameMaxDegreeOfParallelism = savegameMaxDegreeOfParallelism;
+            _loadOnlyPropertiesInDomain = loadOnlyPropertiesInDomain;
         }
 
-        public ArkGameData(string saveFilePath, ArkClusterDataBase clusterData)
+        public ArkGameData(string saveFilePath, ArkClusterDataBase clusterData, int? savegameMaxDegreeOfParallelism = null, bool loadOnlyPropertiesInDomain = false)
         {
             _saveFilePath = saveFilePath;
             _clusterData = clusterData;
+            _savegameMaxDegreeOfParallelism = savegameMaxDegreeOfParallelism;
+            _loadOnlyPropertiesInDomain = loadOnlyPropertiesInDomain;
         }
 
         /// <param name="externalPlayerData">Supply the update operation with external player data. This is a way to make sure transfered players are not lost inbetween saves.</param>
@@ -41,16 +67,17 @@ namespace ArkSavegameToolkitNet.Domain
             try
             {
                 var directoryPath = Path.GetDirectoryName(_saveFilePath);
+                var exclusivePropertyNameTree = _loadOnlyPropertiesInDomain ? ArkGameDataContainerBase._alldependencies : null;
 
                 // Extract all game data
-                save = new ArkSavegame(_saveFilePath);
+                save = new ArkSavegame(_saveFilePath, null, _savegameMaxDegreeOfParallelism, exclusivePropertyNameTree);
                 save.LoadEverything();
                 ct.ThrowIfCancellationRequested();
 
-                var arktribes = Directory.GetFiles(directoryPath, "*.arktribe", SearchOption.TopDirectoryOnly).Select(x => new ArkSavegameToolkitNet.ArkTribe(x)).ToArray();
+                var arktribes = Directory.GetFiles(directoryPath, "*.arktribe", SearchOption.TopDirectoryOnly).Select(x => new ArkSavegameToolkitNet.ArkTribe(x, exclusivePropertyNameTree: exclusivePropertyNameTree)).ToArray();
                 ct.ThrowIfCancellationRequested();
 
-                var arkprofiles = Directory.GetFiles(directoryPath, "*.arkprofile", SearchOption.TopDirectoryOnly).Select(x => new ArkProfile(x)).ToArray();
+                var arkprofiles = Directory.GetFiles(directoryPath, "*.arkprofile", SearchOption.TopDirectoryOnly).Select(x => new ArkProfile(x, exclusivePropertyNameTree: exclusivePropertyNameTree)).ToArray();
                 ct.ThrowIfCancellationRequested();
 
                 // Remove duplicates from object collection (objects are sometimes duplicated for structures, creatures etc.)
@@ -58,7 +85,6 @@ namespace ArkSavegameToolkitNet.Domain
 
                 // Map all game data into domain model
                 // Note: objects.GroupBy(x => x.Names.Last().Token) would also get creature, status- and inventory component together
-                var _myCharacterStatusComponent = ArkName.Create("MyCharacterStatusComponent");
                 var statusComponents = objects.Where(x => x.IsDinoStatusComponent).ToDictionary(x => x.ObjectId, x => x);
                 var tamed = objects.Where(x => x.IsTamedCreature).Select(x =>
                 {
@@ -123,9 +149,6 @@ namespace ArkSavegameToolkitNet.Domain
                 save?.Dispose();
             }
 
-            // Force an immediate garbage collection because it seems more effective (extraction process requires a great deal of memory)
-            GC.Collect();
-
             return new ArkGameDataUpdateResult { Success = success, Cancelled = cancelled, Elapsed = st.Elapsed };
         }
 
@@ -177,6 +200,9 @@ namespace ArkSavegameToolkitNet.Domain
 
             // Assign updated data to public properties
             newGameData.CopyTo(this);
+
+            // Force an immediate garbage collection because it seems more effective (extraction process requires a great deal of memory)
+            //GC.Collect();
         }
     }
 }

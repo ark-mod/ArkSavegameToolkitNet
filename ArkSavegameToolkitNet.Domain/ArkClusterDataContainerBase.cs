@@ -10,6 +10,14 @@ namespace ArkSavegameToolkitNet.Domain
     {
         internal ArkClusterDataBase _clusterData;
 
+        internal static readonly ArkNameTree _alldependencies = ArkNameTree.Merge(
+            ArkCloudInventory._dependencies,
+            ArkCloudInventoryItem._dependencies,
+            ArkCloudInventoryDino._dependencies,
+            ArkTamedCreatureAncestor._dependencies,
+            GameObject._dependencies
+            );
+
         internal void Initialize(ArkClusterDataBase clusterData)
         {
             _clusterData = clusterData;

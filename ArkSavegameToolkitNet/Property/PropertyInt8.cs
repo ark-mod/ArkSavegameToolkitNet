@@ -16,12 +16,18 @@ namespace ArkSavegameToolkitNet.Property
         {
         }
 
-        public PropertyInt8(ArkArchive archive, PropertyArgs args) : base(archive, args)
+        public PropertyInt8(ArkArchive archive, PropertyArgs args, bool propertyIsExcluded = false) : base(archive, args, propertyIsExcluded)
         {
+            if (propertyIsExcluded)
+            {
+                archive.Position += 1;
+                return;
+            }
+
             _value = archive.GetByte();
         }
 
-        public override Type ValueClass => typeof(sbyte?);
+        //public override Type ValueClass => typeof(sbyte?);
 
         public override sbyte? Value
         {

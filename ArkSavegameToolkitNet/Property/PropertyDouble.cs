@@ -16,12 +16,19 @@ namespace ArkSavegameToolkitNet.Property
         {
         }
 
-        public PropertyDouble(ArkArchive archive, PropertyArgs args) : base(archive, args)
+        public PropertyDouble(ArkArchive archive, PropertyArgs args, bool propertyIsExcluded = false) : base(archive, args, propertyIsExcluded)
         {
+            if (propertyIsExcluded)
+            {
+                archive.Position += 8;
+                return;
+            }
+
+
             _value = archive.GetDouble();
         }
 
-        public override Type ValueClass => typeof(double);
+        //public override Type ValueClass => typeof(double);
 
         public override double? Value
         {

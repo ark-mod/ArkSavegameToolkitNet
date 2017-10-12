@@ -13,29 +13,36 @@ namespace ArkSavegameToolkitNet.Property
     {
         [JsonProperty(Order = 0)]
         public ArkName Name { get; set; }
-        [JsonProperty(Order = 1)]
-        public ArkName TypeName { get; set; }
+        //[JsonProperty(Order = 1)]
+        //public ArkName TypeName { get; set; }
         public int DataSize { get; set; }
         public int Index { get; set; }
-        [JsonProperty(Order = 2)]
+        [JsonProperty(Order = 1)]
         public abstract TValue Value { set; get; }
-        public abstract Type ValueClass { get; }
+        //public abstract Type ValueClass { get; }
 
         protected internal TValue _value;
 
         public PropertyBase(string name, string typeName, int index, TValue value)
         {
             Name = ArkName.Create(name);
-            TypeName = ArkName.Create(typeName);
+            //TypeName = ArkName.Create(typeName);
             Index = index;
             _value = value;
         }
 
-        public PropertyBase(ArkArchive archive, PropertyArgs args)
+        public PropertyBase(ArkArchive archive, PropertyArgs args, bool propertyIsExcluded = false)
         {
             Name = args.Name;
-            TypeName = args.TypeName;
+            //TypeName = args.TypeName;
             DataSize = archive.GetInt();
+
+            if (propertyIsExcluded)
+            {
+                archive.Position += 4;
+                return;
+            }
+
             Index = archive.GetInt();
         }
 
@@ -103,11 +110,10 @@ namespace ArkSavegameToolkitNet.Property
         //    }
         //}
 
-        public virtual void CollectNames(ISet<string> nameTable)
-        {
-            nameTable.Add(Name.Name);
-            nameTable.Add(TypeName.Name);
-        }
-
+        //public virtual void CollectNames(ISet<string> nameTable)
+        //{
+        //    nameTable.Add(Name.Name);
+        //    nameTable.Add(TypeName.Name);
+        //}
     }
 }

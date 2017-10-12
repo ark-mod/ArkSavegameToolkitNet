@@ -26,13 +26,34 @@ namespace ArkSavegameToolkitNet.Domain
         };
 
         //width, height, latitude-top, longitude-left, longitude-right, latitude-bottom
-        private static Dictionary<string, Tuple<int, int, float, float, float, float>> _topoMapCalcs = new Dictionary<string, Tuple<int, int, float, float, float, float>>
+        private static Dictionary<string, Tuple<int, int, float, float, float, float>> _topoMapCalcs;
+
+        static ArkLocation()
         {
-            { "TheIsland", Tuple.Create(MapResources.topo_map_TheIsland.Width, MapResources.topo_map_TheIsland.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
-            { "TheCenter", Tuple.Create(MapResources.topo_map_TheCenter.Width, MapResources.topo_map_TheCenter.Height, -2.5f, 1f, 104.5f, 101f) },
-            { "ScorchedEarth_P", Tuple.Create(MapResources.topo_map_ScorchedEarth_P.Width, MapResources.topo_map_ScorchedEarth_P.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
-            { "Ragnarok", Tuple.Create(MapResources.topo_map_Ragnarok.Width, MapResources.topo_map_Ragnarok.Height, 0.0f, 0.0f, 100.0f, 100.0f) }
-        };
+            System.Drawing.Bitmap island = null, center = null, scorched = null, ragnarok = null;
+            try
+            {
+                island = MapResources.topo_map_TheIsland;
+                center = MapResources.topo_map_TheCenter;
+                scorched = MapResources.topo_map_ScorchedEarth_P;
+                ragnarok = MapResources.topo_map_Ragnarok;
+
+                _topoMapCalcs = new Dictionary<string, Tuple<int, int, float, float, float, float>>
+                {
+                    { "TheIsland", Tuple.Create(island.Width, island.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
+                    { "TheCenter", Tuple.Create(center.Width, center.Height, -2.5f, 1f, 104.5f, 101f) },
+                    { "ScorchedEarth_P", Tuple.Create(scorched.Width, scorched.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
+                    { "Ragnarok", Tuple.Create(ragnarok.Width, ragnarok.Height, 0.0f, 0.0f, 100.0f, 100.0f) }
+                };
+            }
+            finally
+            {
+                island?.Dispose();
+                center?.Dispose();
+                scorched?.Dispose();
+                ragnarok?.Dispose();
+            }
+        }
 
         public ArkLocation() { }
 

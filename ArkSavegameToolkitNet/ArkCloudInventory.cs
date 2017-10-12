@@ -51,6 +51,7 @@ namespace ArkSavegameToolkitNet
         }
         private GameObject _inventoryData;
         private ArkNameCache _arkNameCache;
+        private ArkNameTree _exclusivePropertyNameTree;
 
         public ArkCloudInventory()
         {
@@ -59,9 +60,10 @@ namespace ArkSavegameToolkitNet
             _arkNameCache = new ArkNameCache();
         }
 
-        public ArkCloudInventory(string fileName, ArkNameCache arkNameCache = null) : this()
+        public ArkCloudInventory(string fileName, ArkNameCache arkNameCache = null, ArkNameTree exclusivePropertyNameTree = null) : this()
         {
             if (arkNameCache != null) _arkNameCache = arkNameCache;
+            _exclusivePropertyNameTree = exclusivePropertyNameTree;
             var fi = new FileInfo(fileName);
             SteamId = Path.GetFileNameWithoutExtension(fileName);
             SaveTime = fi.LastWriteTimeUtc;
@@ -72,7 +74,7 @@ namespace ArkSavegameToolkitNet
             {
                 using (MemoryMappedViewAccessor va = mmf.CreateViewAccessor(0L, 0L, MemoryMappedFileAccess.Read))
                 {
-                    ArkArchive archive = new ArkArchive(va, size, _arkNameCache);
+                    ArkArchive archive = new ArkArchive(va, size, _arkNameCache, exclusivePropertyNameTree: _exclusivePropertyNameTree);
                     readBinary(archive);
                 }
             }
@@ -107,7 +109,7 @@ namespace ArkSavegameToolkitNet
 
                 var data = x.GetPropertyValue<Arrays.ArkArrayByte>(_dinoData);
 
-                return new ArkCloudInventoryDinoData(version.Value, data);
+                return new ArkCloudInventoryDinoData(version.Value, data, exclusivePropertyNameTree: archive.ExclusivePropertyNameTree);
             }).ToArray();
         }
 

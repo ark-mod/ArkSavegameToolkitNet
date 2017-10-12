@@ -23,15 +23,17 @@ namespace ArkSavegameToolkitNet.Structs
             Properties = properties;
         }
 
-        public StructPropertyList(ArkArchive archive, ArkName structType) : this(structType)
+        public StructPropertyList(ArkArchive archive, ArkName structType, ArkNameTree exclusivePropertyNameTree = null) : this(structType)
         {
             Properties = new Dictionary<ArkName, IProperty>();
 
-            var property = PropertyRegistry.readProperty(archive);
+            var property = PropertyRegistry.readProperty(archive, exclusivePropertyNameTree);
             while (property != null)
             {
-                Properties.Add(ArkName.Create(property.Name.Token, property.Index), property);
-                property = PropertyRegistry.readProperty(archive);
+                if (property != ExcludedProperty.Instance)
+                    Properties.Add(ArkName.Create(property.Name.Token, property.Index), property);
+
+                property = PropertyRegistry.readProperty(archive, exclusivePropertyNameTree);
             }
         }
 
@@ -44,11 +46,11 @@ namespace ArkSavegameToolkitNet.Structs
         //    return size;
         //}
 
-        public override void CollectNames(ISet<string> nameTable)
-        {
-            base.CollectNames(nameTable);
+        //public override void CollectNames(ISet<string> nameTable)
+        //{
+        //    base.CollectNames(nameTable);
 
-            foreach (var p in Properties.Values) p.CollectNames(nameTable);
-        }
+        //    foreach (var p in Properties.Values) p.CollectNames(nameTable);
+        //}
     }
 }

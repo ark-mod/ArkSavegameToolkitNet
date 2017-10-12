@@ -20,7 +20,7 @@ namespace ArkSavegameToolkitNet
         public ArkName Create(string name, int index)
         {
             var token = index == 0 ? name : $"{name}_{index}";
-            return _instances.GetOrAdd(token, s => new ArkName(name, index));
+            return _instances.GetOrAdd(token, s => new ArkName(name, index, token));
         }
     }
 }

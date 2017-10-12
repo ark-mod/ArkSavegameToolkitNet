@@ -11,6 +11,11 @@ namespace ArkSavegameToolkitNet.Domain
     {
         private static readonly ArkName _bForceDisablingTaming = ArkName.Create("bForceDisablingTaming");
 
+        internal static readonly new ArkNameTree _dependencies = new ArkNameTree
+        {
+            { _bForceDisablingTaming, null }
+        };
+
         internal new void Decouple()
         {
             base.Decouple();

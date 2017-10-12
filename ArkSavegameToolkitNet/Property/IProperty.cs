@@ -10,9 +10,9 @@ namespace ArkSavegameToolkitNet.Property
 { 
     public interface IProperty : INameContainer
     {
-        Type ValueClass { get; }
+        //Type ValueClass { get; }
         ArkName Name { get; set; }
-        ArkName TypeName { get; set; }
+        //ArkName TypeName { get; set; }
         int DataSize { get; set; }
         int Index { get; set; }
     }

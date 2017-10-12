@@ -22,6 +22,23 @@ namespace ArkSavegameToolkitNet.Domain
         private static readonly ArkName _membersPlayerName = ArkName.Create("MembersPlayerName");
         private static readonly ArkName _tribeAdmins = ArkName.Create("TribeAdmins");
 
+        internal static readonly ArkNameTree _dependencies = new ArkNameTree
+        {
+            {
+                _tribeData,
+                new ArkNameTree
+                {
+                    { _tribeName, null },
+                    { _tribeID, null },
+                    { _tribeLog, null },
+                    { _ownerPlayerDataID, null },
+                    { _membersPlayerDataID, null },
+                    { _membersPlayerName, null },
+                    { _tribeAdmins, null }
+                }
+            }
+        };
+
         internal IGameObject _tribe;
 
         internal void Decouple()

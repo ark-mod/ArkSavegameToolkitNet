@@ -44,6 +44,51 @@ namespace ArkSavegameToolkitNet.Domain
         };
         private static readonly ArkName _myInventoryComponent = ArkName.Create("MyInventoryComponent");
 
+        internal static readonly ArkNameTree _dependencies = new ArkNameTree
+        {
+            {
+                _myData,
+                new ArkNameTree
+                {
+                    {
+                        _myPlayerCharacterConfig,
+                        new ArkNameTree
+                        {
+                            { _playerCharacterName, null },
+                            { _bIsFemale, null }
+                        }
+                    },
+                    {
+                        _myPersistentCharacterStats,
+                        new ArkNameTree
+                        {
+                            { _playerState_TotalEngramPoints, null },
+                            { _characterStatusComponent_ExperiencePoints, null },
+                            { _characterStatusComponent_ExtraCharacterLevel, null },
+                            { _characterStatusComponent_NumberOfLevelUpPointsApplied[0], null },
+                            { _characterStatusComponent_NumberOfLevelUpPointsApplied[1], null },
+                            { _characterStatusComponent_NumberOfLevelUpPointsApplied[2], null },
+                            { _characterStatusComponent_NumberOfLevelUpPointsApplied[3], null },
+                            { _characterStatusComponent_NumberOfLevelUpPointsApplied[4], null },
+                            { _characterStatusComponent_NumberOfLevelUpPointsApplied[5], null },
+                            { _characterStatusComponent_NumberOfLevelUpPointsApplied[6], null },
+                            { _characterStatusComponent_NumberOfLevelUpPointsApplied[7], null },
+                            { _characterStatusComponent_NumberOfLevelUpPointsApplied[8], null },
+                            { _characterStatusComponent_NumberOfLevelUpPointsApplied[9], null },
+                            { _characterStatusComponent_NumberOfLevelUpPointsApplied[10], null },
+                            { _characterStatusComponent_NumberOfLevelUpPointsApplied[11], null }
+                        }
+                    },
+                    { _playerDataID, null },
+                    { _uniqueID, null },
+                    { _tribeID, null },
+                    { _playerName, null },
+                    { _savedNetworkAddress, null }
+                }
+            },
+            { _myInventoryComponent, null }
+        };
+
         internal IGameObject _profile;
         internal IGameObject _player;
 

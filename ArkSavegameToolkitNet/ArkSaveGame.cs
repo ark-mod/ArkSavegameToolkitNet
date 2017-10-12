@@ -69,22 +69,31 @@ namespace ArkSavegameToolkitNet
         private string _fileName;
         private bool _baseRead;
         private long _gameObjectsOffset;
+        private ArkStringCache _arkStringCache;
         private ArkNameCache _arkNameCache;
+        private readonly int? _savegameMaxDegreeOfParallelism;
+        private ArkNameTree _exclusivePropertyNameTree;
 
         private MemoryMappedFile _mmf;
         private MemoryMappedViewAccessor _va;
         private ArkArchive _archive;
 
-        public ArkSavegame()
+        public ArkSavegame(int? savegameMaxDegreeOfParallelism = null, ArkNameTree exclusivePropertyNameTree = null)
         {
             Objects = new List<GameObject>();
             _arkNameCache = new ArkNameCache();
-    }
+            _arkStringCache = new ArkStringCache();
+            _savegameMaxDegreeOfParallelism = savegameMaxDegreeOfParallelism;
+            _exclusivePropertyNameTree = exclusivePropertyNameTree;
+        }
 
-        public ArkSavegame(string fileName, ArkNameCache arkNameCache = null)
+        public ArkSavegame(string fileName, ArkNameCache arkNameCache = null, int? savegameMaxDegreeOfParallelism = null, ArkNameTree exclusivePropertyNameTree = null)
         {
             _fileName = fileName;
             _arkNameCache = arkNameCache ?? new ArkNameCache();
+            _arkStringCache = new ArkStringCache();
+            _savegameMaxDegreeOfParallelism = savegameMaxDegreeOfParallelism;
+            _exclusivePropertyNameTree = exclusivePropertyNameTree;
 
             var fi = new FileInfo(_fileName);
             var size = fi.Length;
@@ -93,7 +102,7 @@ namespace ArkSavegameToolkitNet
 
             _mmf = MemoryMappedFile.CreateFromFile(_fileName, FileMode.Open, null, 0L, MemoryMappedFileAccess.Read);
             _va = _mmf.CreateViewAccessor(0L, 0L, MemoryMappedFileAccess.Read);
-            _archive = new ArkArchive(_va, size, _arkNameCache);
+            _archive = new ArkArchive(_va, size, _arkNameCache, _arkStringCache, _exclusivePropertyNameTree);
         }
 
         /// <summary>
@@ -363,7 +372,7 @@ namespace ArkSavegameToolkitNet
 
                     var indices = Enumerable.Range(0, Objects.Count);
                     if (objectFilter != null) indices = indices.Where(x => objectFilter(Objects[x]));
-                    Parallel.ForEach(indices, new ParallelOptions { MaxDegreeOfParallelism = 6 },
+                    Parallel.ForEach(indices, _savegameMaxDegreeOfParallelism.HasValue ? new ParallelOptions { MaxDegreeOfParallelism = _savegameMaxDegreeOfParallelism.Value } : new ParallelOptions { },
                         () => { ArkArchive arch = null; var va = cb.TryTake(out arch) ? null : mmf.CreateViewAccessor(0L, 0L, MemoryMappedFileAccess.Read); return new { va = va, a = arch ?? new ArkArchive(archive, va) }; },
                         (item, loopState, taskLocals) =>
                         {

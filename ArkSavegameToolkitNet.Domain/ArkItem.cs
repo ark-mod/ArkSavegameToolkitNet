@@ -70,6 +70,60 @@ namespace ArkSavegameToolkitNet.Domain
         private static readonly ArkName _eggRandomMutationsFemale = ArkName.Create("EggRandomMutationsFemale");
         private static readonly ArkName _eggRandomMutationsMale = ArkName.Create("EggRandomMutationsMale");
 
+        internal static readonly ArkNameTree _dependencies = new ArkNameTree
+        {
+            {
+                _itemId,
+                new ArkNameTree
+                {
+                    { _itemId1, null },
+                    { _itemId2, null }
+                }
+            },
+            { _ownerInventory, null },
+            { _itemQuantity, null },
+            { _bIsBlueprint, null },
+            { _bIsEngram, null },
+            { _bHideFromInventoryDisplay, null },
+            { _customItemDescription, null },
+            { _customItemName, null },
+            { _itemRating, null },
+            { _savedDurability, null },
+            { _itemQualityIndex, null },
+            { _creationTime, null },
+            { _itemStatValues[0], null },
+            { _itemStatValues[1], null },
+            { _itemStatValues[2], null },
+            { _itemStatValues[3], null },
+            { _itemStatValues[4], null },
+            { _itemStatValues[5], null },
+            { _itemStatValues[6], null },
+            { _itemStatValues[7], null },
+            { _eggDinoAncestors, null },
+            { _eggDinoAncestorsMale, null },
+            { _eggColorSetIndices[0], null },
+            { _eggColorSetIndices[1], null },
+            { _eggColorSetIndices[2], null },
+            { _eggColorSetIndices[3], null },
+            { _eggColorSetIndices[4], null },
+            { _eggColorSetIndices[5], null },
+            { _eggNumberOfLevelUpPointsApplied[0], null },
+            { _eggNumberOfLevelUpPointsApplied[1], null },
+            { _eggNumberOfLevelUpPointsApplied[2], null },
+            { _eggNumberOfLevelUpPointsApplied[3], null },
+            { _eggNumberOfLevelUpPointsApplied[4], null },
+            { _eggNumberOfLevelUpPointsApplied[5], null },
+            { _eggNumberOfLevelUpPointsApplied[6], null },
+            { _eggNumberOfLevelUpPointsApplied[7], null },
+            { _eggNumberOfLevelUpPointsApplied[8], null },
+            { _eggNumberOfLevelUpPointsApplied[9], null },
+            { _eggNumberOfLevelUpPointsApplied[10], null },
+            { _eggNumberOfLevelUpPointsApplied[11], null },
+            { _eggRandomMutationsMale, null },
+            { _eggRandomMutationsFemale, null },
+            { _originalItemDropLocation, null }
+        };
+
         // Filters
         internal static Func<ArkItem, bool> Filter_RealItems = new Func<ArkItem, bool>((i) => !(i.IsEngram || i.HideFromInventoryDisplay));
 
@@ -182,6 +236,7 @@ namespace ArkSavegameToolkitNet.Domain
         public float? SavedDurability { get; set; }
         public sbyte? QualityIndex { get; set; }
         public double? CreationTime { get; set; }
+        [JsonIgnore]
         public TimeSpan? ExistedForApprox => _saveState?.GetApproxTimeElapsedSince(CreationTime);
         public short?[] StatValues { get; set; }
         public ArkLocation Location { get; set; }

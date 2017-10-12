@@ -18,13 +18,13 @@ namespace ArkSavegameToolkitNet.Property
         {
         }
 
-        public PropertyByte(ArkArchive archive, PropertyArgs args) : base(archive, args)
+        public PropertyByte(ArkArchive archive, PropertyArgs args, bool propertyIsExcluded = false) : base(archive, args, propertyIsExcluded)
         {
             var enumName = archive.GetName();
-            _value = new ArkByteValue(archive, enumName);
+            _value = new ArkByteValue(archive, enumName, propertyIsExcluded);
         }
 
-        public override Type ValueClass => typeof(ArkByteValue);
+        //public override Type ValueClass => typeof(ArkByteValue);
 
         public override ArkByteValue Value
         {
@@ -48,11 +48,10 @@ namespace ArkSavegameToolkitNet.Property
         //    return value.getSize(nameTable);
         //}
 
-        public override void CollectNames(ISet<string> nameTable)
-        {
-            base.CollectNames(nameTable);
-            _value.CollectNames(nameTable);
-        }
-
+        //public override void CollectNames(ISet<string> nameTable)
+        //{
+        //    base.CollectNames(nameTable);
+        //    _value.CollectNames(nameTable);
+        //}
     }
 }

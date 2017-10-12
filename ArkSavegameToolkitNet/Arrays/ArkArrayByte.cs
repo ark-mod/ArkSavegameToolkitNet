@@ -16,6 +16,7 @@ namespace ArkSavegameToolkitNet.Arrays
         public ArkArrayByte(ArkArchive archive, int dataSize)
         {
             var size = archive.GetInt();
+            Capacity = size;
 
             if (size + 4 != dataSize)
             {

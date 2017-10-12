@@ -44,6 +44,34 @@ namespace ArkSavegameToolkitNet.Domain
             ArkName.Create("NumberOfLevelUpPointsApplied", 11) //crafting speed
         };
 
+        internal static readonly ArkNameTree _dependencies = new ArkNameTree
+        {
+            { _dinoId1, null },
+            { _dinoId2, null },
+            { _baseCharacterLevel, null },
+            { _bIsBaby, null },
+            { _babyAge, null },
+            { _bIsFemale, null },
+            { _colorSetIndices[0], null },
+            { _colorSetIndices[1], null },
+            { _colorSetIndices[2], null },
+            { _colorSetIndices[3], null },
+            { _colorSetIndices[4], null },
+            { _colorSetIndices[5], null },
+            { _numberOfLevelUpPointsApplied[0], null },
+            { _numberOfLevelUpPointsApplied[1], null },
+            { _numberOfLevelUpPointsApplied[2], null },
+            { _numberOfLevelUpPointsApplied[3], null },
+            { _numberOfLevelUpPointsApplied[4], null },
+            { _numberOfLevelUpPointsApplied[5], null },
+            { _numberOfLevelUpPointsApplied[6], null },
+            { _numberOfLevelUpPointsApplied[7], null },
+            { _numberOfLevelUpPointsApplied[8], null },
+            { _numberOfLevelUpPointsApplied[9], null },
+            { _numberOfLevelUpPointsApplied[10], null },
+            { _numberOfLevelUpPointsApplied[11], null }
+        };
+
         internal IGameObject _creature;
         internal IGameObject _status;
 

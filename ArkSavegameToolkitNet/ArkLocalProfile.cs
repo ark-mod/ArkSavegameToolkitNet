@@ -49,6 +49,7 @@ namespace ArkSavegameToolkitNet
         private GameObject _localprofile;
         private sbyte[] unknownData;
         private ArkNameCache _arkNameCache;
+        private ArkNameTree _exclusivePropertyNameTree;
         private string _fileName;
 
         public ArkLocalProfile()
@@ -57,11 +58,12 @@ namespace ArkSavegameToolkitNet
             _arkNameCache = new ArkNameCache();
         }
 
-        public ArkLocalProfile(string fileName, ArkNameCache arkNameCache = null) : this()
+        public ArkLocalProfile(string fileName, ArkNameCache arkNameCache = null, ArkNameTree exclusivePropertyNameTree = null) : this()
         {
             _fileName = fileName;
 
             if (arkNameCache != null) _arkNameCache = arkNameCache;
+            _exclusivePropertyNameTree = exclusivePropertyNameTree;
             var fi = new FileInfo(fileName);
             SaveTime = fi.LastWriteTimeUtc;
             var size = fi.Length;
@@ -70,7 +72,7 @@ namespace ArkSavegameToolkitNet
             {
                 using (MemoryMappedViewAccessor va = mmf.CreateViewAccessor(0L, 0L, MemoryMappedFileAccess.Read))
                 {
-                    ArkArchive archive = new ArkArchive(va, size, _arkNameCache);
+                    ArkArchive archive = new ArkArchive(va, size, _arkNameCache, exclusivePropertyNameTree: _exclusivePropertyNameTree);
                     readBinary(archive);
                 }
             }

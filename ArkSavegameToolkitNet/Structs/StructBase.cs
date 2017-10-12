@@ -23,10 +23,10 @@ namespace ArkSavegameToolkitNet.Structs
 
         public virtual bool Native => true;
 
-        public virtual void CollectNames(ISet<string> nameTable)
-        {
-            if (StructType != null) nameTable.Add(StructType.Name);
-        }
+        //public virtual void CollectNames(ISet<string> nameTable)
+        //{
+        //    if (StructType != null) nameTable.Add(StructType.Name);
+        //}
 
     }
 }

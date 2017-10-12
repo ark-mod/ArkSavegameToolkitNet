@@ -31,7 +31,7 @@ namespace ArkSavegameToolkitNet.Property
         private static readonly ArkName _array = ArkName.Create("ArrayProperty");
         private static readonly ArkName _text = ArkName.Create("TextProperty");
 
-        public static IProperty readProperty(ArkArchive archive)
+        public static IProperty readProperty(ArkArchive archive, ArkNameTree exclusivePropertyNameTree = null)
         {
             var name = archive.GetName();
             if (name == null || name.Equals(ArkName.EMPTY_NAME))
@@ -45,28 +45,35 @@ namespace ArkSavegameToolkitNet.Property
                 return null;
             }
 
+            var propertyIsExcluded = exclusivePropertyNameTree?.ContainsKey(name) == false;
+
             var type = archive.GetName();
             var args = new PropertyArgs(name, type);
 
-            if (type.Equals(_int) || type.Equals(_uint32)) return new PropertyInt32(archive, args);
-            else if (type.Equals(_bool)) return new PropertyBool(archive, args);
-            else if (type.Equals(_byte)) return new PropertyByte(archive, args);
-            else if (type.Equals(_float)) return new PropertyFloat(archive, args);
-            else if (type.Equals(_double)) return new PropertyDouble(archive, args);
-            else if (type.Equals(_int8)) return new PropertyInt8(archive, args);
-            else if (type.Equals(_int16) || type.Equals(_uint16)) return new PropertyInt16(archive, args);
-            else if (type.Equals(_uint64)) return new PropertyInt64(archive, args);
-            else if (type.Equals(_name)) return new PropertyName(archive, args);
-            else if (type.Equals(_object)) return new PropertyObject(archive, args);
-            else if (type.Equals(_str)) return new PropertyStr(archive, args);
-            else if (type.Equals(_struct)) return new PropertyStruct(archive, args);
-            else if (type.Equals(_array)) return new PropertyArray(archive, args);
-            else if (type.Equals(_text)) return new PropertyText(archive, args);
+            IProperty result = null;
+            if (type.Equals(_int) || type.Equals(_uint32)) result = new PropertyInt32(archive, args, propertyIsExcluded);
+            else if (type.Equals(_bool)) result = new PropertyBool(archive, args, propertyIsExcluded);
+            else if (type.Equals(_byte)) result = new PropertyByte(archive, args, propertyIsExcluded);
+            else if (type.Equals(_float)) result = new PropertyFloat(archive, args, propertyIsExcluded);
+            else if (type.Equals(_double)) result = new PropertyDouble(archive, args, propertyIsExcluded);
+            else if (type.Equals(_int8)) result = new PropertyInt8(archive, args, propertyIsExcluded);
+            else if (type.Equals(_int16) || type.Equals(_uint16)) result = new PropertyInt16(archive, args, propertyIsExcluded);
+            else if (type.Equals(_uint64)) result = new PropertyInt64(archive, args, propertyIsExcluded);
+            else if (type.Equals(_name)) result = new PropertyName(archive, args, propertyIsExcluded);
+            else if (type.Equals(_object)) result = new PropertyObject(archive, args, propertyIsExcluded);
+            else if (type.Equals(_str)) result = new PropertyStr(archive, args, propertyIsExcluded);
+            else if (type.Equals(_struct)) result = new PropertyStruct(archive, args, propertyIsExcluded, exclusivePropertyNameTree == null || propertyIsExcluded ? null : exclusivePropertyNameTree[name]);
+            else if (type.Equals(_array)) result = new PropertyArray(archive, args, propertyIsExcluded);
+            else if (type.Equals(_text)) result = new PropertyText(archive, args, propertyIsExcluded);
             else
             {
                 _logger.Error($"Unknown property type {type} near {archive.Position:X}. Ignoring remaining properties.");
                 throw new UnreadablePropertyException();
             }
+
+            if (propertyIsExcluded) return ExcludedProperty.Instance;
+
+            return result;
         }
     }
 }

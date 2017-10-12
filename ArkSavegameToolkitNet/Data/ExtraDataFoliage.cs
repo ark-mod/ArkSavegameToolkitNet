@@ -30,16 +30,15 @@ namespace ArkSavegameToolkitNet.Data
         //    return size;
         //}
 
-        public void CollectNames(ISet<string> nameTable)
-        {
-            foreach (IDictionary<string, StructPropertyList> structMap in StructMapList)
-            {
-                foreach (KeyValuePair<string, StructPropertyList> entry in structMap)
-                {
-                    entry.Value.CollectNames(nameTable);
-                }
-            }
-        }
-
+        //public void CollectNames(ISet<string> nameTable)
+        //{
+        //    foreach (IDictionary<string, StructPropertyList> structMap in StructMapList)
+        //    {
+        //        foreach (KeyValuePair<string, StructPropertyList> entry in structMap)
+        //        {
+        //            entry.Value.CollectNames(nameTable);
+        //        }
+        //    }
+        //}
     }
 }

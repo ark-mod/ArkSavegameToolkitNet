@@ -24,6 +24,7 @@ namespace ArkSavegameToolkitNet
         public float DinoDataVersion { get; set; }
 
         private ArkNameCache _arkNameCache;
+        private ArkNameTree _exclusivePropertyNameTree;
 
         public ArkCloudInventoryDinoData()
         {
@@ -31,7 +32,7 @@ namespace ArkSavegameToolkitNet
             _arkNameCache = new ArkNameCache();
         }
 
-        public ArkCloudInventoryDinoData(float version, ArkArrayByte dinoData, ArkNameCache arkNameCache = null) : this()
+        public ArkCloudInventoryDinoData(float version, ArkArrayByte dinoData, ArkNameCache arkNameCache = null, ArkNameTree exclusivePropertyNameTree = null) : this()
         {
             //if (version != 3.0) throw new NotSupportedException("Unknown Cloud Inventory Dino Data Version " + version);
             DinoDataVersion = version;
@@ -39,6 +40,7 @@ namespace ArkSavegameToolkitNet
             if (dinoData == null || dinoData.Any(x => !x.HasValue)) throw new NotSupportedException("DinoData was null or contained null-values.");
 
             if (arkNameCache != null) _arkNameCache = arkNameCache;
+            _exclusivePropertyNameTree = exclusivePropertyNameTree;
 
 
             //since the ArkArchive implementation we have takes a MemoryMappedViewAccessor for reading operations lets do the lazy thing and write this managed byte[] data to a new memory mapped file
@@ -47,7 +49,7 @@ namespace ArkSavegameToolkitNet
                 using (MemoryMappedViewAccessor va = mmf.CreateViewAccessor(0L, 0L, MemoryMappedFileAccess.ReadWrite))
                 {
                     va.WriteArray(0, dinoData.Select(x => x.Value).ToArray(), 0, dinoData.Count);
-                    ArkArchive archive = new ArkArchive(va, dinoData.Count, _arkNameCache);
+                    ArkArchive archive = new ArkArchive(va, dinoData.Count, _arkNameCache, exclusivePropertyNameTree: _exclusivePropertyNameTree);
                     readBinary(archive);
                 }
             }

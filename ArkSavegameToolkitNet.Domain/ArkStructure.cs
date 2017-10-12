@@ -21,6 +21,17 @@ namespace ArkSavegameToolkitNet.Domain
         private static readonly ArkName _boxName = ArkName.Create("BoxName");
         private static readonly ArkName _attachedToDinoId1 = ArkName.Create("AttachedToDinoID1");
 
+        internal static readonly ArkNameTree _dependencies = new ArkNameTree
+        {
+            { _ownerName, null },
+            { _targetingTeam, null },
+            { _owningPlayerID, null },
+            { _owningPlayerName, null },
+            { _myInventoryComponent, null },
+            { _boxName, null },
+            { _attachedToDinoId1, null }
+        };
+
         internal IGameObject _structure;
 
         internal void Decouple()

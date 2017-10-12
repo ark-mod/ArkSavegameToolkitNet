@@ -8,6 +8,6 @@ namespace ArkSavegameToolkitNet
 {
     public interface INameContainer
     {
-        void CollectNames(ISet<string> nameTable);
+        //void CollectNames(ISet<string> nameTable);
     }
 }

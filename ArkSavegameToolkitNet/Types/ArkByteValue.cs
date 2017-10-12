@@ -34,9 +34,9 @@ namespace ArkSavegameToolkitNet.Types
             _nameValue = nameValue;
         }
 
-        public ArkByteValue(ArkArchive archive, ArkName enumName)
+        public ArkByteValue(ArkArchive archive, ArkName enumName, bool propertyIsExcluded = false)
         {
-            read(archive, enumName);
+            read(archive, enumName, propertyIsExcluded);
         }
 
         [JsonProperty]
@@ -73,19 +73,27 @@ namespace ArkSavegameToolkitNet.Types
         //    return _fromEnum ? ArkArchive.GetNameLength(_nameValue, nameTable) : 1;
         //}
 
-        public void read(ArkArchive archive, ArkName enumName)
+        public void read(ArkArchive archive, ArkName enumName, bool propertyIsExcluded = false)
         {
             _enumName = enumName;
             _fromEnum = !enumName.Equals(ArkName.NONE_NAME);
-            if (_fromEnum) _nameValue = archive.GetName();
-            else _byteValue = archive.GetByte();
+            if (propertyIsExcluded)
+            {
+                if (_fromEnum) archive.SkipName();
+                else archive.Position += 1;
+            }
+            else
+            {
+                if (_fromEnum) _nameValue = archive.GetName();
+                else _byteValue = archive.GetByte();
+            }
         }
 
-        public void CollectNames(ISet<string> nameTable)
-        {
-            nameTable.Add(_enumName.Name);
-            if (_fromEnum) nameTable.Add(_nameValue.Name);
-        }
+        //public void CollectNames(ISet<string> nameTable)
+        //{
+        //    nameTable.Add(_enumName.Name);
+        //    if (_fromEnum) nameTable.Add(_nameValue.Name);
+        //}
 
         public TypeCode GetTypeCode()
         {

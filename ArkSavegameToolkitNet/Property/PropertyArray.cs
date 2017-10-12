@@ -28,8 +28,15 @@ namespace ArkSavegameToolkitNet.Property
 
         }
 
-        public PropertyArray(ArkArchive archive, PropertyArgs args) : base(archive, args)
+        public PropertyArray(ArkArchive archive, PropertyArgs args, bool propertyIsExcluded = false) : base(archive, args, propertyIsExcluded)
         {
+            if (propertyIsExcluded)
+            {
+                archive.SkipName();
+                archive.Position += DataSize;
+                return;
+            }
+
             ArrayType = archive.GetName();
 
             var position = archive.Position;
@@ -51,7 +58,7 @@ namespace ArkSavegameToolkitNet.Property
             }
         }
 
-        public override Type ValueClass => typeof(IArkArray);
+        //public override Type ValueClass => typeof(IArkArray);
 
         public override IArkArray Value
         {
@@ -90,11 +97,11 @@ namespace ArkSavegameToolkitNet.Property
         //    return value.calculateSize(nameTable);
         //}
 
-        public override void CollectNames(ISet<string> nameTable)
-        {
-            base.CollectNames(nameTable);
-            nameTable.Add(ArrayType.Name);
-            _value.CollectNames(nameTable);
-        }
+        //public override void CollectNames(ISet<string> nameTable)
+        //{
+        //    base.CollectNames(nameTable);
+        //    nameTable.Add(ArrayType.Name);
+        //    _value.CollectNames(nameTable);
+        //}
     }
 }

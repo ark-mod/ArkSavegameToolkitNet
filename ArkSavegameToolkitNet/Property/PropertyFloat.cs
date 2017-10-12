@@ -16,12 +16,18 @@ namespace ArkSavegameToolkitNet.Property
         {
         }
 
-        public PropertyFloat(ArkArchive archive, PropertyArgs args) : base(archive, args)
+        public PropertyFloat(ArkArchive archive, PropertyArgs args, bool propertyIsExcluded = false) : base(archive, args, propertyIsExcluded)
         {
+            if (propertyIsExcluded)
+            {
+                archive.Position += 4;
+                return;
+            }
+
             _value = archive.GetFloat();
         }
 
-        public override Type ValueClass => typeof(float?);
+        //public override Type ValueClass => typeof(float?);
 
         public override float? Value
         {

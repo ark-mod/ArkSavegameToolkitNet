@@ -18,12 +18,19 @@ namespace ArkSavegameToolkitNet.Property
         {
         }
 
-        public PropertyObject(ArkArchive archive, PropertyArgs args) : base(archive, args)
+        public PropertyObject(ArkArchive archive, PropertyArgs args, bool propertyIsExcluded = false) : base(archive, args, propertyIsExcluded)
         {
+            if (propertyIsExcluded)
+            {
+                archive.Position += DataSize;
+                return;
+            }
+
+
             _value = new ObjectReference(archive, DataSize);
         }
 
-        public override Type ValueClass => typeof(ObjectReference);
+        //public override Type ValueClass => typeof(ObjectReference);
 
         public override ObjectReference Value
         {
@@ -50,16 +57,16 @@ namespace ArkSavegameToolkitNet.Property
         //    }
         //}
 
-        public override void CollectNames(ISet<string> nameTable)
-        {
-            base.CollectNames(nameTable);
-            _value.CollectNames(nameTable);
-        }
+        //public override void CollectNames(ISet<string> nameTable)
+        //{
+        //    base.CollectNames(nameTable);
+        //    _value.CollectNames(nameTable);
+        //}
 
         public override string ToString()
         {
-            return "PropertyObject [value=" + Value + ", name=" + Name + ", typeName=" + TypeName + ", dataSize=" + DataSize + ", index=" + Index + "]";
+            return "PropertyObject [value=" + Value + ", name=" + Name + ", dataSize=" + DataSize + ", index=" + Index + "]";
+            //return "PropertyObject [value=" + Value + ", name=" + Name + ", typeName=" + TypeName + ", dataSize=" + DataSize + ", index=" + Index + "]";
         }
-
     }
 }

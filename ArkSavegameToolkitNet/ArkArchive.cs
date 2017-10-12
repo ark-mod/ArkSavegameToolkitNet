@@ -20,12 +20,16 @@ namespace ArkSavegameToolkitNet
         private MemoryMappedViewAccessor _va;
         private IReadOnlyList<string> _nameTable;
         private ArkNameCache _arkNameCache;
+        private ArkStringCache _arkStringCache;
+        private ArkNameTree _exclusivePropertyNameTree;
 
-        public ArkArchive(MemoryMappedViewAccessor va, long size, ArkNameCache arkNameCache = null)
+        public ArkArchive(MemoryMappedViewAccessor va, long size, ArkNameCache arkNameCache = null, ArkStringCache arkStringCache = null, ArkNameTree exclusivePropertyNameTree = null)
         {
             _va = va;
             _size = size;
             _arkNameCache = arkNameCache ?? new ArkNameCache();
+            _arkStringCache = arkStringCache ?? new ArkStringCache();
+            _exclusivePropertyNameTree = exclusivePropertyNameTree;
         }
 
         public ArkArchive(ArkArchive toClone, MemoryMappedViewAccessor va)
@@ -34,7 +38,11 @@ namespace ArkSavegameToolkitNet
             _size = toClone._size;
             _nameTable = toClone._nameTable;
             _arkNameCache = toClone._arkNameCache;
+            _arkStringCache = toClone._arkStringCache;
+            _exclusivePropertyNameTree = toClone._exclusivePropertyNameTree;
         }
+
+        public ArkNameTree ExclusivePropertyNameTree => _exclusivePropertyNameTree;
 
         public long Position
         {
@@ -46,7 +54,7 @@ namespace ArkSavegameToolkitNet
             {
                 if (value < 0 || value >= _size)
                 {
-                    _logger.Error($"Attempted to set position outside steam bounds (offset: {value:X}, size: {_size:X})");
+                    _logger.Error($"Attempted to set position outside stream bounds (offset: {value:X}, size: {_size:X})");
                     throw new OverflowException();
                 }
 
@@ -129,6 +137,18 @@ namespace ArkSavegameToolkitNet
             }
         }
 
+        public void SkipName()
+        {
+            if (_nameTable == null)
+            {
+                SkipString();
+            }
+            else
+            {
+                Position += 8;
+            }
+        }
+
         public int GetNameLength(long position)
         {
             if (_nameTable == null)
@@ -163,14 +183,16 @@ namespace ArkSavegameToolkitNet
                 var count = _va.ReadArray(position + 4, buffer, 0, absSize);
                 var result = new string(buffer, 0, absSize - 1);
 
-                return result;
+                //return result;
+                return _arkStringCache.Add(result);
             }
             else
             {
                 var buffer = new byte[absSize];
                 var count = _va.ReadArray(_position + 4, buffer, 0, absSize);
 
-                return Encoding.ASCII.GetString(buffer, 0, absSize - 1);
+                //return Encoding.ASCII.GetString(buffer, 0, absSize - 1);
+                return _arkStringCache.Add(Encoding.ASCII.GetString(buffer, 0, absSize - 1));
             }
         }
 
@@ -196,7 +218,8 @@ namespace ArkSavegameToolkitNet
                 _position += absSize * 2;
                 var result = new string(buffer, 0, absSize - 1);
 
-                return result;
+                //return result;
+                return _arkStringCache.Add(result);
             }
             else
             {
@@ -204,7 +227,8 @@ namespace ArkSavegameToolkitNet
                 var count = _va.ReadArray(_position, buffer, 0, absSize);
                 _position += absSize;
 
-                return Encoding.ASCII.GetString(buffer, 0, absSize - 1);
+                //return Encoding.ASCII.GetString(buffer, 0, absSize - 1);
+                return _arkStringCache.Add(Encoding.ASCII.GetString(buffer, 0, absSize - 1));
             }
         }
 

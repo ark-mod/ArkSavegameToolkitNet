@@ -17,11 +17,25 @@ namespace ArkSavegameToolkitNet.Domain
         private static readonly ArkName _arkItems = ArkName.Create("ArkItems");
         private static readonly ArkName _arkTamedDinosData = ArkName.Create("ArkTamedDinosData");
 
+        internal static readonly ArkNameTree _dependencies = new ArkNameTree
+        {
+            {
+                _myArkData,
+                new ArkNameTree
+                {
+                    { _arkItems, null },
+                    { _arkTamedDinosData, null }
+                }
+            }
+        };
+
         internal IGameObject _cloudinv;
 
         internal void Decouple()
         {
             _cloudinv = null;
+            foreach (var item in Items) item.Decouple();
+            foreach (var dino in Dinos) dino.Decouple();
         }
 
         public ArkCloudInventory()

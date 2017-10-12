@@ -20,13 +20,20 @@ namespace ArkSavegameToolkitNet.Property
         {
         }
 
-        public PropertyStruct(ArkArchive archive, PropertyArgs args) : base(archive, args)
+        public PropertyStruct(ArkArchive archive, PropertyArgs args, bool propertyIsExcluded = false, ArkNameTree exclusivePropertyNameTree = null) : base(archive, args, propertyIsExcluded)
         {
+            if (propertyIsExcluded)
+            {
+                archive.SkipName();
+                archive.Position += DataSize;
+                return;
+            }
+
             var structType = archive.GetName();
             var position = archive.Position;
             try
             {
-                _value = StructRegistry.read(archive, structType);
+                _value = StructRegistry.read(archive, structType, exclusivePropertyNameTree);
             }
             catch (UnreadablePropertyException)
             {
@@ -35,7 +42,7 @@ namespace ArkSavegameToolkitNet.Property
             }
         }
 
-        public override Type ValueClass => typeof(IStruct);
+        //public override Type ValueClass => typeof(IStruct);
 
         public override IStruct Value
         {
@@ -59,11 +66,10 @@ namespace ArkSavegameToolkitNet.Property
         //    return value.getSize(nameTable);
         //}
 
-        public override void CollectNames(ISet<string> nameTable)
-        {
-            base.CollectNames(nameTable);
-            _value.CollectNames(nameTable);
-        }
-
+        //public override void CollectNames(ISet<string> nameTable)
+        //{
+        //    base.CollectNames(nameTable);
+        //    _value.CollectNames(nameTable);
+        //}
     }
 }

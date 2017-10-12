@@ -14,6 +14,13 @@ namespace ArkSavegameToolkitNet.Domain
         private static readonly ArkName _waterAmount = ArkName.Create("WaterAmount");
         private static readonly ArkName _plantedCrop = ArkName.Create("PlantedCrop");
 
+        internal static readonly new ArkNameTree _dependencies = new ArkNameTree
+        {
+            { _cropPhaseFertilizerCache, null },
+            { _waterAmount, null },
+            { _plantedCrop, null }
+        };
+
         public ArkStructureCropPlot() : base()
         {
         }

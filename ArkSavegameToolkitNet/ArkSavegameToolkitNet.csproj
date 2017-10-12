@@ -54,8 +54,10 @@
     <Compile Include="ArkLocalProfile.cs" />
     <Compile Include="ArkNameCache.cs" />
     <Compile Include="ArkNameCollectionComparer.cs" />
+    <Compile Include="ArkNameTree.cs" />
     <Compile Include="ArkProfile.cs" />
     <Compile Include="ArkSaveGame.cs" />
+    <Compile Include="ArkStringCache.cs" />
     <Compile Include="ArkTribe.cs" />
     <Compile Include="Arrays\ArkArrayBool.cs" />
     <Compile Include="Arrays\ArkArrayByte.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="GameObject.cs" />
     <Compile Include="ICloudInventoryDinoData.cs" />
     <Compile Include="ISaveState.cs" />
+    <Compile Include="Property\ExcludedProperty.cs" />
     <Compile Include="SaveState.cs" />
     <Compile Include="IGameObject.cs" />
     <Compile Include="IGameObjectContainer.cs" />

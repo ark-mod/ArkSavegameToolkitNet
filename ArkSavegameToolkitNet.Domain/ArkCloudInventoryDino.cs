@@ -37,6 +37,10 @@ namespace ArkSavegameToolkitNet.Domain
         //    ArkName.Create("DinoStats", 11) //crafting speed
         //};
 
+        internal static readonly new ArkNameTree _dependencies = new ArkNameTree
+        {
+        };
+
         //private Regex _r_nameLevelSpecies = new Regex(@"^(?<name>.+) - Lvl (?<level>\d+) \((?<species>.+)\)$", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.ExplicitCapture);
 
         internal IPropertyContainer _dino;

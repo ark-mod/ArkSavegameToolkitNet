@@ -17,12 +17,18 @@ namespace ArkSavegameToolkitNet.Property
         {
         }
 
-        public PropertyBool(ArkArchive archive, PropertyArgs args) : base(archive, args)
+        public PropertyBool(ArkArchive archive, PropertyArgs args, bool propertyIsExcluded = false) : base(archive, args, propertyIsExcluded)
         {
+            if (propertyIsExcluded)
+            {
+                archive.Position += 1;
+                return;
+            }
+
             _value = archive.GetByte() != 0;
         }
 
-        public override Type ValueClass => typeof(bool?);
+        //public override Type ValueClass => typeof(bool?);
 
         public override bool? Value
         {

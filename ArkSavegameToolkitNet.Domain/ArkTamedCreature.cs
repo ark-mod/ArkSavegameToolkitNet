@@ -100,6 +100,81 @@ namespace ArkSavegameToolkitNet.Domain
         };
         private static readonly ArkName _myInventoryComponent = ArkName.Create("MyInventoryComponent");
 
+        internal static readonly new ArkNameTree _dependencies = new ArkNameTree
+        {
+            { _owningPlayerID, null },
+            { _owningPlayerName, null },
+            { _tamedName, null },
+            { _tamedOnServerName, null },
+            { _tamerString, null },
+            { _targetingTeam, null },
+            { _tribeName, null },
+            { _randomMutationsMale, null },
+            { _randomMutationsFemale, null },
+            { _tamedAtTime, null },
+            { _lastUpdatedGestationAtTime, null },
+            { _lastUpdatedMatingAtTime, null },
+            { _babyGestationProgress, null },
+            { _babyNextCuddleTime, null },
+            { _bNeutered, null },
+            { _dinoAncestors, null },
+            { _dinoAncestorsMale, null },
+            { _gestationEggColorSetIndices[0], null },
+            { _gestationEggColorSetIndices[1], null },
+            { _gestationEggColorSetIndices[2], null },
+            { _gestationEggColorSetIndices[3], null },
+            { _gestationEggColorSetIndices[4], null },
+            { _gestationEggColorSetIndices[5], null },
+            { _gestationEggNumberOfLevelUpPointsApplied[0], null },
+            { _gestationEggNumberOfLevelUpPointsApplied[1], null },
+            { _gestationEggNumberOfLevelUpPointsApplied[2], null },
+            { _gestationEggNumberOfLevelUpPointsApplied[3], null },
+            { _gestationEggNumberOfLevelUpPointsApplied[4], null },
+            { _gestationEggNumberOfLevelUpPointsApplied[5], null },
+            { _gestationEggNumberOfLevelUpPointsApplied[6], null },
+            { _gestationEggNumberOfLevelUpPointsApplied[7], null },
+            { _gestationEggNumberOfLevelUpPointsApplied[8], null },
+            { _gestationEggNumberOfLevelUpPointsApplied[9], null },
+            { _gestationEggNumberOfLevelUpPointsApplied[10], null },
+            { _gestationEggNumberOfLevelUpPointsApplied[11], null },
+            { _gestationEggRandomMutationsMale, null },
+            { _gestationEggRandomMutationsFemale, null },
+            { _imprinterName, null },
+            { _imprinterPlayerDataID, null },
+            { _nextAllowedMatingTime, null },
+            { _nextBabyDinoAncestors, null },
+            { _nextBabyDinoAncestorsMale, null },
+            { _myInventoryComponent, null },
+            { _numberOfLevelUpPointsAppliedTamed[0], null },
+            { _numberOfLevelUpPointsAppliedTamed[1], null },
+            { _numberOfLevelUpPointsAppliedTamed[2], null },
+            { _numberOfLevelUpPointsAppliedTamed[3], null },
+            { _numberOfLevelUpPointsAppliedTamed[4], null },
+            { _numberOfLevelUpPointsAppliedTamed[5], null },
+            { _numberOfLevelUpPointsAppliedTamed[6], null },
+            { _numberOfLevelUpPointsAppliedTamed[7], null },
+            { _numberOfLevelUpPointsAppliedTamed[8], null },
+            { _numberOfLevelUpPointsAppliedTamed[9], null },
+            { _numberOfLevelUpPointsAppliedTamed[10], null },
+            { _numberOfLevelUpPointsAppliedTamed[11], null },
+            { _dinoImprintingQuality, null },
+            { _experiencePoints, null },
+            { _extraCharacterLevel, null },
+            { _tamedIneffectivenessModifier, null },
+            { _currentStatusValues[0], null },
+            { _currentStatusValues[1], null },
+            { _currentStatusValues[2], null },
+            { _currentStatusValues[3], null },
+            { _currentStatusValues[4], null },
+            { _currentStatusValues[5], null },
+            { _currentStatusValues[6], null },
+            { _currentStatusValues[7], null },
+            { _currentStatusValues[8], null },
+            { _currentStatusValues[9], null },
+            { _currentStatusValues[10], null },
+            { _currentStatusValues[11], null }
+        };
+
         private ISaveState _saveState;
 
         internal new void Decouple()
@@ -210,10 +285,13 @@ namespace ArkSavegameToolkitNet.Domain
         public int TargetingTeam { get; set; }
         public string TribeName { get; set; }
         public double? TamedAtTime { get; set; }
+        [JsonIgnore]
         public TimeSpan? TamedForApprox => _saveState?.GetApproxTimeElapsedSince(TamedAtTime);
         public double? LastUpdatedGestationAtTime { get; set; }
+        [JsonIgnore]
         public TimeSpan? LastUpdatedGestationTimeAgoApprox => _saveState?.GetApproxTimeElapsedSince(LastUpdatedGestationAtTime);
         public double? LastUpdatedMatingAtTime { get; set; }
+        [JsonIgnore]
         public TimeSpan? LastUpdatedMatingTimeAgoApprox => _saveState?.GetApproxTimeElapsedSince(LastUpdatedMatingAtTime);
         public int RandomMutationsFemale { get; set; }
         public int RandomMutationsMale { get; set; }

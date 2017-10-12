@@ -36,14 +36,14 @@ namespace ArkSavegameToolkitNet.Property
         private static readonly ArkName _rotator = ArkName.Create("Rotator");
         private static readonly ArkName _uniqueNetIdRepl = ArkName.Create("UniqueNetIdRepl");
 
-        public static IStruct read(ArkArchive archive, ArkName structType)
+        public static IStruct read(ArkArchive archive, ArkName structType, ArkNameTree exclusivePropertyNameTree = null)
         {
             if (structType.Equals(_itemNetId) || structType.Equals(_transform)
                 || structType.Equals(_primalPlayerDataStruct) || structType.Equals(_primalPlayerCharacterConfigStruct)
                 || structType.Equals(_primalPersistentCharacterStatsStruct) || structType.Equals(_tribeData)
                 || structType.Equals(_tribeGovernment) || structType.Equals(_terrainInfo)
                 || structType.Equals(_itemNetInfo) || structType.Equals(_arkInventoryData)
-                || structType.Equals(_dinoOrderGroup) || structType.Equals(_arkDinoData)) return new StructPropertyList(archive, structType);
+                || structType.Equals(_dinoOrderGroup) || structType.Equals(_arkDinoData)) return new StructPropertyList(archive, structType, exclusivePropertyNameTree);
             else if (structType.Equals(_vector) || structType.Equals(_rotator)) return new StructVector(archive, structType);
             else if (structType.Equals(_vector2d)) return new StructVector2d(archive, structType);
             else if (structType.Equals(_quat)) return new StructQuat(archive, structType);

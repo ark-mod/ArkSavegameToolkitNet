@@ -1,4 +1,5 @@
-﻿using ArkSavegameToolkitNet.Data;
+﻿using ArkSavegameToolkitNet;
+using ArkSavegameToolkitNet.Data;
 using ArkSavegameToolkitNet.Exceptions;
 using ArkSavegameToolkitNet.Property;
 using ArkSavegameToolkitNet.Types;
@@ -16,6 +17,29 @@ namespace ArkSavegameToolkitNet
     [JsonObject(MemberSerialization.OptIn)]
     public class GameObject : IGameObject, INameContainer
     {
+        [Flags]
+        private enum GameObjectIs
+        {
+            None = 0,
+            IsCreature = 1 << 0,
+            IsTamedCreature = 1 << 1,
+            IsWildCreature = 1 << 2,
+            IsRaftCreature = 1 << 3,
+            IsStructure = 1 << 4,
+            IsInventory = 1 << 5,
+            IsTamedCreatureInventory = 1 << 6,
+            IsWildCreatureInventory = 1 << 7,
+            IsStructureInventory = 1 << 8,
+            IsPlayerCharacterInventory = 1 << 9,
+            IsStatusComponent = 1 << 10,
+            IsDinoStatusComponent = 1 << 11,
+            IsPlayerCharacterStatusComponent = 1 << 12,
+            IsDroppedItem = 1 << 13,
+            IsPlayerCharacter = 1 << 14,
+            IsStructurePaintingComponent = 1 << 15,
+            IsSomethingElse = 1 << 16
+        }
+
         private static ILog _logger = LogManager.GetLogger(typeof(GameObject));
         private static readonly IDictionary<Tuple<long, long>, Guid> _uuidCache = new ConcurrentDictionary<Tuple<long, long>, Guid>();
         protected internal int _propertiesOffset;
@@ -37,23 +61,43 @@ namespace ArkSavegameToolkitNet
         public IExtraData ExtraData { get; set; }
 
         //query helper fields
-        public bool IsCreature { get; set; }
-        public bool IsTamedCreature { get; set; }
-        public bool IsWildCreature { get; set; }
-        public bool IsRaftCreature { get; set; }
-        public bool IsStructure { get; set; }
-        public bool IsInventory { get; set; }
-        public bool IsTamedCreatureInventory { get; set; }
-        public bool IsWildCreatureInventory { get; set; }
-        public bool IsStructureInventory { get; set; }
-        public bool IsPlayerCharacterInventory { get; set; }
-        public bool IsStatusComponent { get; set; }
-        public bool IsDinoStatusComponent { get; set; }
-        public bool IsPlayerCharacterStatusComponent { get; set; }
-        public bool IsDroppedItem { get; set; }
-        public bool IsPlayerCharacter { get; set; }
-        public bool IsStructurePaintingComponent { get; set; }
-        public bool IsSomethingElse { get; set; }
+        private GameObjectIs _isFlags;
+
+        public bool IsCreature => (_isFlags & GameObjectIs.IsCreature) == GameObjectIs.IsCreature;
+        public bool IsTamedCreature => (_isFlags & GameObjectIs.IsTamedCreature) == GameObjectIs.IsTamedCreature;
+        public bool IsWildCreature => (_isFlags & GameObjectIs.IsWildCreature) == GameObjectIs.IsWildCreature;
+        public bool IsRaftCreature => (_isFlags & GameObjectIs.IsRaftCreature) == GameObjectIs.IsRaftCreature;
+        public bool IsStructure => (_isFlags & GameObjectIs.IsStructure) == GameObjectIs.IsStructure;
+        public bool IsInventory => (_isFlags & GameObjectIs.IsInventory) == GameObjectIs.IsInventory;
+        public bool IsTamedCreatureInventory => (_isFlags & GameObjectIs.IsTamedCreatureInventory) == GameObjectIs.IsTamedCreatureInventory;
+        public bool IsWildCreatureInventory => (_isFlags & GameObjectIs.IsWildCreatureInventory) == GameObjectIs.IsWildCreatureInventory;
+        public bool IsStructureInventory => (_isFlags & GameObjectIs.IsStructureInventory) == GameObjectIs.IsStructureInventory;
+        public bool IsPlayerCharacterInventory => (_isFlags & GameObjectIs.IsPlayerCharacterInventory) == GameObjectIs.IsPlayerCharacterInventory;
+        public bool IsStatusComponent => (_isFlags & GameObjectIs.IsStatusComponent) == GameObjectIs.IsStatusComponent;
+        public bool IsDinoStatusComponent => (_isFlags & GameObjectIs.IsDinoStatusComponent) == GameObjectIs.IsDinoStatusComponent;
+        public bool IsPlayerCharacterStatusComponent => (_isFlags & GameObjectIs.IsPlayerCharacterStatusComponent) == GameObjectIs.IsPlayerCharacterStatusComponent;
+        public bool IsDroppedItem => (_isFlags & GameObjectIs.IsDroppedItem) == GameObjectIs.IsDroppedItem;
+        public bool IsPlayerCharacter => (_isFlags & GameObjectIs.IsPlayerCharacter) == GameObjectIs.IsPlayerCharacter;
+        public bool IsStructurePaintingComponent => (_isFlags & GameObjectIs.IsStructurePaintingComponent) == GameObjectIs.IsStructurePaintingComponent;
+        public bool IsSomethingElse => (_isFlags & GameObjectIs.IsSomethingElse) == GameObjectIs.IsSomethingElse;
+
+        //public bool IsCreature { get; set; }
+        //public bool IsTamedCreature { get; set; }
+        //public bool IsWildCreature { get; set; }
+        //public bool IsRaftCreature { get; set; }
+        //public bool IsStructure { get; set; }
+        //public bool IsInventory { get; set; }
+        //public bool IsTamedCreatureInventory { get; set; }
+        //public bool IsWildCreatureInventory { get; set; }
+        //public bool IsStructureInventory { get; set; }
+        //public bool IsPlayerCharacterInventory { get; set; }
+        //public bool IsStatusComponent { get; set; }
+        //public bool IsDinoStatusComponent { get; set; }
+        //public bool IsPlayerCharacterStatusComponent { get; set; }
+        //public bool IsDroppedItem { get; set; }
+        //public bool IsPlayerCharacter { get; set; }
+        //public bool IsStructurePaintingComponent { get; set; }
+        //public bool IsSomethingElse { get; set; }
 
         private ArkNameCache _arkNameCache;
 
@@ -170,10 +214,22 @@ namespace ArkSavegameToolkitNet
         private static ArkName _bInitializedMe = ArkName.Create("bInitializedMe", 0);
         private static ArkName _currentStatusValues = ArkName.Create("CurrentStatusValues", 0);
         private static ArkName _raft_bp_c = ArkName.Create("Raft_BP_C", 0);
+        private static ArkName _motorraft_bp_c = ArkName.Create("MotorRaft_BP_C", 0);
         private static ArkName _structurePaintingComponent = ArkName.Create("StructurePaintingComponent", 0);
         private static ArkName _male = ArkName.Create("PlayerPawnTest_Male_C", 0);
         private static ArkName _female = ArkName.Create("PlayerPawnTest_Female_C", 0);
         private static ArkName _droppedItem = ArkName.Create("DroppedItemGenericLowQuality_C", 0);
+
+        internal static readonly ArkNameTree _dependencies = new ArkNameTree
+        {
+            { _dinoId1, null },
+            { _tamerString, null },
+            { _tamingTeamID, null },
+            { _ownerName, null },
+            { _bHasResetDecayTime, null },
+            { _bInitializedMe, null },
+            { _currentStatusValues, null }
+        };
 
         public void loadProperties(ArkArchive archive, GameObject next, long propertiesBlockOffset, int? nextGameObjectPropertiesOffset = null)
         {
@@ -185,12 +241,14 @@ namespace ArkSavegameToolkitNet
             properties.Clear();
             try
             {
-                var property = PropertyRegistry.readProperty(archive);
+                var property = PropertyRegistry.readProperty(archive, archive.ExclusivePropertyNameTree);
 
                 while (property != null)
                 {
-                    properties.Add(_arkNameCache.Create(property.Name.Token, property.Index), property);
-                    property = PropertyRegistry.readProperty(archive);
+                    if (property != ExcludedProperty.Instance)
+                        properties.Add(_arkNameCache.Create(property.Name.Token, property.Index), property);
+
+                    property = PropertyRegistry.readProperty(archive, archive.ExclusivePropertyNameTree);
                 }
             }
             catch (UnreadablePropertyException)
@@ -203,37 +261,81 @@ namespace ArkSavegameToolkitNet
                 //these are in order of most common to least common to keep lookups at a minimum
                 if (IsItem) goto SkipRest;
 
-                IsStructure = (Properties.ContainsKey(_ownerName) || Properties.ContainsKey(_bHasResetDecayTime));
-                if (IsStructure) goto SkipRest;
+                if (Properties.ContainsKey(_ownerName) || Properties.ContainsKey(_bHasResetDecayTime))
+                {
+                    _isFlags |= GameObjectIs.IsStructure;
+                    goto SkipRest;
+                }
 
-                IsCreature = Properties.ContainsKey(_dinoId1);
-                IsTamedCreature = IsCreature && (Properties.ContainsKey(_tamerString) || Properties.ContainsKey(_tamingTeamID));
-                IsWildCreature = IsCreature && !IsTamedCreature;
-                IsRaftCreature = IsTamedCreature && ClassName.Equals(_raft_bp_c);
+                if (Properties.ContainsKey(_dinoId1)) _isFlags |= GameObjectIs.IsCreature;
+                if (IsCreature && (Properties.ContainsKey(_tamerString) || Properties.ContainsKey(_tamingTeamID))) _isFlags |= GameObjectIs.IsTamedCreature;
+                if (IsCreature && !IsTamedCreature) _isFlags |= GameObjectIs.IsWildCreature;
+                if (IsTamedCreature && (ClassName.Equals(_raft_bp_c) || ClassName.Equals(_motorraft_bp_c))) _isFlags |= GameObjectIs.IsRaftCreature;
                 if (IsCreature) goto SkipRest;
 
-                IsStatusComponent = Properties.ContainsKey(_currentStatusValues);
-                IsDinoStatusComponent = IsStatusComponent && ClassName.Token.StartsWith("DinoCharacterStatusComponent_");
-                IsPlayerCharacterStatusComponent = IsStatusComponent && !IsDinoStatusComponent && ClassName.Token.StartsWith("PlayerCharacterStatusComponent_");
+                if (Properties.ContainsKey(_currentStatusValues)) _isFlags |= GameObjectIs.IsStatusComponent;
+                if (IsStatusComponent && ClassName.Token.StartsWith("DinoCharacterStatusComponent_")) _isFlags |= GameObjectIs.IsDinoStatusComponent;
+                if (IsStatusComponent && !IsDinoStatusComponent && ClassName.Token.StartsWith("PlayerCharacterStatusComponent_")) _isFlags |= GameObjectIs.IsPlayerCharacterStatusComponent;
                 if (IsStatusComponent) goto SkipRest;
 
-                IsInventory = Properties.ContainsKey(_bInitializedMe);
-                IsStructureInventory = IsInventory && ClassName.Token.StartsWith("PrimalInventoryBP_");
-                IsTamedCreatureInventory = IsInventory && !IsStructureInventory && ClassName.Token.StartsWith("DinoTamedInventoryComponent_");
-                IsPlayerCharacterInventory = IsInventory && !(IsStructureInventory || IsTamedCreatureInventory) && ClassName.Token.StartsWith("PrimalInventoryComponent");
-                IsWildCreatureInventory = IsInventory && !(IsStructureInventory || IsTamedCreatureInventory || IsPlayerCharacterInventory) && ClassName.Token.StartsWith("DinoWildInventoryComponent_");
+                if (Properties.ContainsKey(_bInitializedMe)) _isFlags |= GameObjectIs.IsInventory;
+                if (IsInventory && ClassName.Token.StartsWith("PrimalInventoryBP_")) _isFlags |= GameObjectIs.IsStructureInventory;
+                if (IsInventory && !IsStructureInventory && ClassName.Token.StartsWith("DinoTamedInventoryComponent_")) _isFlags |= GameObjectIs.IsTamedCreatureInventory;
+                if (IsInventory && !(IsStructureInventory || IsTamedCreatureInventory) && ClassName.Token.StartsWith("PrimalInventoryComponent")) _isFlags |= GameObjectIs.IsPlayerCharacterInventory;
+                if (IsInventory && !(IsStructureInventory || IsTamedCreatureInventory || IsPlayerCharacterInventory) && ClassName.Token.StartsWith("DinoWildInventoryComponent_")) _isFlags |= GameObjectIs.IsWildCreatureInventory;
                 if (IsInventory) goto SkipRest;
 
-                IsStructurePaintingComponent = ClassName.Equals(_structurePaintingComponent);
-                if (IsStructurePaintingComponent) goto SkipRest;
+                if (ClassName.Equals(_structurePaintingComponent))
+                {
+                    _isFlags |= GameObjectIs.IsStructurePaintingComponent;
+                    goto SkipRest;
+                }
 
-                IsDroppedItem = ClassName.Equals(_droppedItem);
-                if (IsDroppedItem) goto SkipRest;
+                if (ClassName.Equals(_droppedItem))
+                {
+                    _isFlags |= GameObjectIs.IsDroppedItem;
+                    goto SkipRest;
+                }
 
-                IsPlayerCharacter = ClassName.Equals(_male) || ClassName.Equals(_female);
-                if (IsPlayerCharacter) goto SkipRest;
+                if (ClassName.Equals(_male) || ClassName.Equals(_female))
+                {
+                    _isFlags |= GameObjectIs.IsPlayerCharacter;
+                    goto SkipRest;
+                }
 
-                IsSomethingElse = true;
+                _isFlags |= GameObjectIs.IsSomethingElse;
+
+                //IsStructure = (Properties.ContainsKey(_ownerName) || Properties.ContainsKey(_bHasResetDecayTime));
+                //if (IsStructure) goto SkipRest;
+
+                //IsCreature = Properties.ContainsKey(_dinoId1);
+                //IsTamedCreature = IsCreature && (Properties.ContainsKey(_tamerString) || Properties.ContainsKey(_tamingTeamID));
+                //IsWildCreature = IsCreature && !IsTamedCreature;
+                //IsRaftCreature = IsTamedCreature && ClassName.Equals(_raft_bp_c);
+                //if (IsCreature) goto SkipRest;
+
+                //IsStatusComponent = Properties.ContainsKey(_currentStatusValues);
+                //IsDinoStatusComponent = IsStatusComponent && ClassName.Token.StartsWith("DinoCharacterStatusComponent_");
+                //IsPlayerCharacterStatusComponent = IsStatusComponent && !IsDinoStatusComponent && ClassName.Token.StartsWith("PlayerCharacterStatusComponent_");
+                //if (IsStatusComponent) goto SkipRest;
+
+                //IsInventory = Properties.ContainsKey(_bInitializedMe);
+                //IsStructureInventory = IsInventory && ClassName.Token.StartsWith("PrimalInventoryBP_");
+                //IsTamedCreatureInventory = IsInventory && !IsStructureInventory && ClassName.Token.StartsWith("DinoTamedInventoryComponent_");
+                //IsPlayerCharacterInventory = IsInventory && !(IsStructureInventory || IsTamedCreatureInventory) && ClassName.Token.StartsWith("PrimalInventoryComponent");
+                //IsWildCreatureInventory = IsInventory && !(IsStructureInventory || IsTamedCreatureInventory || IsPlayerCharacterInventory) && ClassName.Token.StartsWith("DinoWildInventoryComponent_");
+                //if (IsInventory) goto SkipRest;
+
+                //IsStructurePaintingComponent = ClassName.Equals(_structurePaintingComponent);
+                //if (IsStructurePaintingComponent) goto SkipRest;
+
+                //IsDroppedItem = ClassName.Equals(_droppedItem);
+                //if (IsDroppedItem) goto SkipRest;
+
+                //IsPlayerCharacter = ClassName.Equals(_male) || ClassName.Equals(_female);
+                //if (IsPlayerCharacter) goto SkipRest;
+
+                //IsSomethingElse = true;
 
                 SkipRest:;
             }
@@ -250,16 +352,16 @@ namespace ArkSavegameToolkitNet
             }
         }
         
-        public void CollectNames(ISet<string> nameTable)
-        {
-            nameTable.Add(ClassName.Name);
+        //public void CollectNames(ISet<string> nameTable)
+        //{
+        //    nameTable.Add(ClassName.Name);
 
-            if (Names != null)
-                foreach (var name in Names) nameTable.Add(name.Name);
+        //    if (Names != null)
+        //        foreach (var name in Names) nameTable.Add(name.Name);
 
-            foreach (var property in properties.Values) property.CollectNames(nameTable);
+        //    foreach (var property in properties.Values) property.CollectNames(nameTable);
 
-            if (ExtraData is INameContainer) ((INameContainer)ExtraData).CollectNames(nameTable);
-        }
+        //    if (ExtraData is INameContainer) ((INameContainer)ExtraData).CollectNames(nameTable);
+        //}
     }
 }

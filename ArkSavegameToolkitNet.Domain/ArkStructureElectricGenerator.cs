@@ -14,6 +14,12 @@ namespace ArkSavegameToolkitNet.Domain
         //private static readonly ArkName _bLastToggleActivated = ArkName.Create("bLastToggleActivated"); //last toggle status (does not tell us if it ran out of gas)
         private static readonly ArkName _bContainerActivated = ArkName.Create("bContainerActivated");
 
+        internal static readonly new ArkNameTree _dependencies = new ArkNameTree
+        {
+            { _currentFuelTimeCache, null },
+            { _bContainerActivated, null }
+        };
+
         public ArkStructureElectricGenerator() : base()
         {
         }

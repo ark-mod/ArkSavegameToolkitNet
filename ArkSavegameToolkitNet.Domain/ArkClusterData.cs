@@ -15,11 +15,13 @@ namespace ArkSavegameToolkitNet.Domain
     public class ArkClusterData : ArkClusterDataBase
     {
         private readonly string _savePath;
+        private readonly bool _loadOnlyPropertiesInDomain;
         private dynamic[] _newData;
 
-        public ArkClusterData(string savePath)
+        public ArkClusterData(string savePath, bool loadOnlyPropertiesInDomain = false)
         {
             _savePath = savePath;
+            _loadOnlyPropertiesInDomain = loadOnlyPropertiesInDomain;
         }
 
         public ArkClusterDataUpdateResult Update(CancellationToken ct, bool deferApplyNewData = false)
@@ -31,8 +33,10 @@ namespace ArkSavegameToolkitNet.Domain
 
             try
             {
+                var exclusivePropertyNameTree = _loadOnlyPropertiesInDomain ? ArkClusterDataContainerBase._alldependencies : null;
+
                 // Extract all cluster data
-                var arkcloudInventories = Directory.GetFiles(_savePath, "*", SearchOption.TopDirectoryOnly).Select(x => new ArkSavegameToolkitNet.ArkCloudInventory(x)).ToArray();
+                var arkcloudInventories = Directory.GetFiles(_savePath, "*", SearchOption.TopDirectoryOnly).Select(x => new ArkSavegameToolkitNet.ArkCloudInventory(x, exclusivePropertyNameTree: exclusivePropertyNameTree)).ToArray();
 
                 var cloudInventories = arkcloudInventories.Where(x => x.InventoryData != null).Select(x => x.InventoryData.AsCloudInventory(x.SteamId, SaveState.FromSaveTime(x.SaveTime), x.InventoryDinoData)).ToArray();
 
@@ -48,9 +52,6 @@ namespace ArkSavegameToolkitNet.Domain
             {
                 save?.Dispose();
             }
-
-            // Force an immediate garbage collection because it seems more effective (extraction process requires a great deal of memory)
-            GC.Collect();
 
             return new ArkClusterDataUpdateResult { Success = success, Cancelled = cancelled, Elapsed = st.Elapsed };
         }
@@ -93,6 +94,9 @@ namespace ArkSavegameToolkitNet.Domain
 
             // Assign updated data to public properties
             newClusterData.CopyTo(this);
+
+            // Force an immediate garbage collection because it seems more effective (extraction process requires a great deal of memory)
+            //GC.Collect();
         }
     }
 }

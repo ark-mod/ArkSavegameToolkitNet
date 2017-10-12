@@ -16,12 +16,18 @@ namespace ArkSavegameToolkitNet.Property
         {
         }
 
-        public PropertyInt32(ArkArchive archive, PropertyArgs args) : base(archive, args)
+        public PropertyInt32(ArkArchive archive, PropertyArgs args, bool propertyIsExcluded = false) : base(archive, args, propertyIsExcluded)
         {
+            if (propertyIsExcluded)
+            {
+                archive.Position += 4;
+                return;
+            }
+
             _value = archive.GetInt();
         }
 
-        public override Type ValueClass => typeof(int?);
+        //public override Type ValueClass => typeof(int?);
 
         public override int? Value
         {

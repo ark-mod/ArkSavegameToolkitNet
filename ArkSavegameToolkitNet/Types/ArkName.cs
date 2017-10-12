@@ -62,11 +62,11 @@ namespace ArkSavegameToolkitNet.Types
             _token = token;
         }
 
-        public ArkName(string name, int index)
+        public ArkName(string name, int index, string token = null)
         {
             _name = name;
             _index = index;
-            _token = index == 0 ? name : $"{name}_{index}";
+            _token = token ?? (index == 0 ? name : $"{name}_{index}");
         }
 
         public override string ToString()

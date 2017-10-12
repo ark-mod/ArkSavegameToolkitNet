@@ -16,12 +16,19 @@ namespace ArkSavegameToolkitNet.Property
         {
         }
 
-        public PropertyInt16(ArkArchive archive, PropertyArgs args) : base(archive, args)
+        public PropertyInt16(ArkArchive archive, PropertyArgs args, bool propertyIsExcluded = false) : base(archive, args, propertyIsExcluded)
         {
+            if (propertyIsExcluded)
+            {
+                archive.Position += 2;
+                return;
+            }
+
+
             _value = archive.GetShort();
         }
 
-        public override Type ValueClass => typeof(short?);
+        //public override Type ValueClass => typeof(short?);
 
         public override short? Value
         {

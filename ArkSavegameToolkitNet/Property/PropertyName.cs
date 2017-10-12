@@ -17,12 +17,18 @@ namespace ArkSavegameToolkitNet.Property
         {
         }
 
-        public PropertyName(ArkArchive archive, PropertyArgs args) : base(archive, args)
+        public PropertyName(ArkArchive archive, PropertyArgs args, bool propertyIsExcluded = false) : base(archive, args, propertyIsExcluded)
         {
+            if (propertyIsExcluded)
+            {
+                archive.SkipName();
+                return;
+            }
+
             _value = archive.GetName();
         }
 
-        public override Type ValueClass => typeof(ArkName);
+        //public override Type ValueClass => typeof(ArkName);
 
         public override ArkName Value
         {
@@ -41,11 +47,10 @@ namespace ArkSavegameToolkitNet.Property
         //    return ArkArchive.getNameLength(value, nameTable);
         //}
 
-        public override void CollectNames(ISet<string> nameTable)
-        {
-            base.CollectNames(nameTable);
-            nameTable.Add(_value.Name);
-        }
-
+        //public override void CollectNames(ISet<string> nameTable)
+        //{
+        //    base.CollectNames(nameTable);
+        //    nameTable.Add(_value.Name);
+        //}
     }
 }

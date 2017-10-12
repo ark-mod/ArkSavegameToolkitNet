@@ -14,6 +14,9 @@ namespace ArkSavegameToolkitNet.Domain
 {
     public class ArkCloudInventoryItem : ArkClusterDataContainerBase
     {
+        private static readonly ArkName _myArkData = ArkName.Create("MyArkData");
+        private static readonly ArkName _arkItems = ArkName.Create("ArkItems");
+
         private static readonly ArkName _arkTributeItem = ArkName.Create("ArkTributeItem"); 
         private static readonly ArkName _itemId = ArkName.Create("ItemId");
         private static readonly ArkName _itemId1 = ArkName.Create("ItemID1");
@@ -78,6 +81,74 @@ namespace ArkSavegameToolkitNet.Domain
         public ArkCloudInventoryItem()
         {
         }
+
+        internal static readonly ArkNameTree _dependencies = new ArkNameTree
+        {
+            {
+                _myArkData,
+                new ArkNameTree
+                {
+                    {
+                        _arkItems,
+                        new ArkNameTree
+                        {
+                            {
+                                _arkTributeItem,
+                                new ArkNameTree
+                                {
+                                    {
+                                        _itemId,
+                                        new ArkNameTree
+                                        {
+                                            { _itemId1, null },
+                                            { _itemId2, null }
+                                        }
+                                    },
+                                    { _itemArchetype, null },
+                                    { _bIsBlueprint, null },
+                                    { _customItemDescription, null },
+                                    { _customItemName, null },
+                                    { _itemQuantity, null },
+                                    { _itemRating, null },
+                                    { _itemDurability, null },
+                                    { _itemQualityIndex, null },
+                                    { _itemStatValues[0], null },
+                                    { _itemStatValues[1], null },
+                                    { _itemStatValues[2], null },
+                                    { _itemStatValues[3], null },
+                                    { _itemStatValues[4], null },
+                                    { _itemStatValues[5], null },
+                                    { _itemStatValues[6], null },
+                                    { _itemStatValues[7], null },
+                                    { _eggDinoAncestors, null },
+                                    { _eggDinoAncestorsMale, null },
+                                    { _eggColorSetIndices[0], null },
+                                    { _eggColorSetIndices[1], null },
+                                    { _eggColorSetIndices[2], null },
+                                    { _eggColorSetIndices[3], null },
+                                    { _eggColorSetIndices[4], null },
+                                    { _eggColorSetIndices[5], null },
+                                    { _eggNumberOfLevelUpPointsApplied[0], null },
+                                    { _eggNumberOfLevelUpPointsApplied[1], null },
+                                    { _eggNumberOfLevelUpPointsApplied[2], null },
+                                    { _eggNumberOfLevelUpPointsApplied[3], null },
+                                    { _eggNumberOfLevelUpPointsApplied[4], null },
+                                    { _eggNumberOfLevelUpPointsApplied[5], null },
+                                    { _eggNumberOfLevelUpPointsApplied[6], null },
+                                    { _eggNumberOfLevelUpPointsApplied[7], null },
+                                    { _eggNumberOfLevelUpPointsApplied[8], null },
+                                    { _eggNumberOfLevelUpPointsApplied[9], null },
+                                    { _eggNumberOfLevelUpPointsApplied[10], null },
+                                    { _eggNumberOfLevelUpPointsApplied[11], null },
+                                    { _eggRandomMutationsMale, null },
+                                    { _eggRandomMutationsFemale, null }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
 
         public ArkCloudInventoryItem(IPropertyContainer item) : this()
         {
