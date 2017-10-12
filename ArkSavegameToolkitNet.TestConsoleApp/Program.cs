@@ -12,10 +12,11 @@ namespace ArkSavegameToolkitNet.TestConsoleApp
         {
             var savePath = @"C:\save\TheIsland.ark";
             var clusterPath = @"C:\save\cluster";
+            var domainOnly = true; //true: optimize loading of the domain model, false: load everything and keep references in memory
 
             //prepare
-            var cd = new ArkClusterData(clusterPath);
-            var gd = new ArkGameData(savePath, cd);
+            var cd = new ArkClusterData(clusterPath, loadOnlyPropertiesInDomain: domainOnly);
+            var gd = new ArkGameData(savePath, cd, loadOnlyPropertiesInDomain: domainOnly);
 
             var st = Stopwatch.StartNew();
             //extract savegame
@@ -31,7 +32,7 @@ namespace ArkSavegameToolkitNet.TestConsoleApp
                 st = Stopwatch.StartNew();
 
                 //assign the new data to the domain model
-                gd.ApplyPreviousUpdate(false);
+                gd.ApplyPreviousUpdate(domainOnly);
 
                 Console.WriteLine($@"Elapsed (gd-apply) {st.ElapsedMilliseconds:N0} ms");
 

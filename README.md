@@ -2,7 +2,13 @@
 
 ## Introduction
 
-A library for reading ARK Survival Evolved savegame files in C#. The library is used extensively by ArkBot (https://github.com/tsebring/ArkBot). 
+A library for reading ARK Survival Evolved savegame files in C#. Includes easy to use .NET domain model. The library is used extensively by ArkBot (https://github.com/tsebring/ArkBot). 
+
+## Install via NuGet package
+
+```
+PM> Install-Package ArkSavegameToolkitNet
+```
 
 ## How to use
 
@@ -18,8 +24,8 @@ namespace Test
         static void Main(string[] args)
         {
             //prepare
-            var cd = new ArkClusterData(@"C:\save\cluster");
-            var gd = new ArkGameData(@"C:\save\TheIsland.ark", cd);
+            var cd = new ArkClusterData(@"C:\save\cluster", loadOnlyPropertiesInDomain: true);
+            var gd = new ArkGameData(@"C:\save\TheIsland.ark", cd, loadOnlyPropertiesInDomain: true);
 
             //extract savegame
             if (gd.Update(CancellationToken.None, deferApplyNewData: true)?.Success == true)
