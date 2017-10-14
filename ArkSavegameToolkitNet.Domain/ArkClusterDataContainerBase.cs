@@ -14,7 +14,9 @@ namespace ArkSavegameToolkitNet.Domain
             ArkCloudInventory._dependencies,
             ArkCloudInventoryItem._dependencies,
             ArkCloudInventoryDino._dependencies,
+            ArkCreature._dependencies,
             ArkTamedCreatureAncestor._dependencies,
+            ArkTamedCreature._dependencies,
             GameObject._dependencies
             );
 
