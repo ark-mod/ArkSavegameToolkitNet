@@ -52,12 +52,12 @@ namespace ArkSavegameToolkitNet.Domain
             _creatures = new Lazy<ArkTamedCreature[]>(() =>
             {
                 ArkTamedCreature[] creatures = null;
-                return _gameData._tribeTamedCreatures.TryGetValue(Id, out creatures) ? creatures : new ArkTamedCreature[] { };
+                return _gameData?._tribeTamedCreatures.TryGetValue(Id, out creatures) == true ? creatures : new ArkTamedCreature[] { };
             });
             _structures = new Lazy<ArkStructure[]>(() =>
             {
                 ArkStructure[] structures = null;
-                return _gameData._tribeStructures.TryGetValue(Id, out structures) ? structures : new ArkStructure[] { };
+                return _gameData?._tribeStructures.TryGetValue(Id, out structures) == true ? structures : new ArkStructure[] { };
             });
             _items = new Lazy<ArkItem[]>(() => Structures.SelectMany(x => x.Inventory)
                 .Concat(Creatures.SelectMany(x => x.Inventory)).Where(ArkItem.Filter_RealItems).ToArray());
@@ -67,7 +67,7 @@ namespace ArkSavegameToolkitNet.Domain
             _members = new Lazy<ArkPlayer[]>(() =>
             {
                 ArkPlayer[] members = null;
-                return _gameData._tribePlayers.TryGetValue(Id, out members) ? members : new ArkPlayer[] { };
+                return _gameData?._tribePlayers.TryGetValue(Id, out members) == true ? members : new ArkPlayer[] { };
             });
             _lastActiveTime = new Lazy<DateTime>(() => Members.Length > 0 ? Members.Max(y => y.LastActiveTime) : SavedAt);
         }

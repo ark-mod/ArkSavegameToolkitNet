@@ -270,7 +270,7 @@ namespace ArkSavegameToolkitNet.Domain
                 if (!InventoryId.HasValue) return new ArkItem[] { };
 
                 ArkItem[] items = null;
-                return _gameData._inventoryItems.TryGetValue(InventoryId.Value, out items) ? items.Where(ArkItem.Filter_RealItems).ToArray() : new ArkItem[] { };
+                return _gameData?._inventoryItems.TryGetValue(InventoryId.Value, out items) == true ? items.Where(ArkItem.Filter_RealItems).ToArray() : new ArkItem[] { };
             });
         }
 

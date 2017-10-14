@@ -106,12 +106,12 @@ namespace ArkSavegameToolkitNet.Domain
             _creatures = new Lazy<ArkTamedCreature[]>(() =>
             {
                 ArkTamedCreature[] creatures = null;
-                return _gameData._playerTamedCreatures.TryGetValue(Id, out creatures) ? creatures : new ArkTamedCreature[] { };
+                return _gameData?._playerTamedCreatures.TryGetValue(Id, out creatures) == true ? creatures : new ArkTamedCreature[] { };
             });
             _structures = new Lazy<ArkStructure[]>(() =>
             {
                 ArkStructure[] structures = null;
-                return _gameData._playerStructures.TryGetValue(Id, out structures) ? structures : new ArkStructure[] { };
+                return _gameData?._playerStructures.TryGetValue(Id, out structures) == true ? structures : new ArkStructure[] { };
             });
             _items = new Lazy<ArkItem[]>(() => Structures.SelectMany(x => x.Inventory)
                 .Concat(Creatures.SelectMany(x => x.Inventory))
@@ -122,28 +122,28 @@ namespace ArkSavegameToolkitNet.Domain
             _tribe = new Lazy<ArkTribe>(() =>
             {
                 ArkTribe tribe = null;
-                return _gameData._playerTribes.TryGetValue(Id, out tribe) ? tribe : null;
+                return _gameData?._playerTribes.TryGetValue(Id, out tribe) == true ? tribe : null;
             });
             _inventory = new Lazy<ArkItem[]>(() => {
                 if (!InventoryId.HasValue) return new ArkItem[] { };
 
                 ArkItem[] items = null;
-                return _gameData._inventoryItems.TryGetValue(InventoryId.Value, out items) ? items.Where(ArkItem.Filter_RealItems).ToArray() : new ArkItem[] { };
+                return _gameData?._inventoryItems.TryGetValue(InventoryId.Value, out items) == true ? items.Where(ArkItem.Filter_RealItems).ToArray() : new ArkItem[] { };
             });
             _cloudCreatures = new Lazy<ArkCloudInventoryDino[]>(() =>
             {
                 ArkCloudInventoryDino[] creatures = null;
-                return _clusterData._playerCloudCreatures.TryGetValue(SteamId, out creatures) ? creatures : new ArkCloudInventoryDino[] { };
+                return _clusterData?._playerCloudCreatures.TryGetValue(SteamId, out creatures) == true ? creatures : new ArkCloudInventoryDino[] { };
             });
             _cloudItems = new Lazy<ArkCloudInventoryItem[]>(() =>
             {
                 ArkCloudInventoryItem[] items = null;
-                return _clusterData._playerCloudItems.TryGetValue(SteamId, out items) ? items : new ArkCloudInventoryItem[] { };
+                return _clusterData?._playerCloudItems.TryGetValue(SteamId, out items) == true ? items : new ArkCloudInventoryItem[] { };
             });
             _lastActiveTime = new Lazy<DateTime>(() =>
             {
                 ArkCloudInventory inv = null;
-                return _clusterData._playerCloudInventories.TryGetValue(SteamId, out inv) && inv.SavedAt > SavedAt ? inv.SavedAt : SavedAt;
+                return _clusterData?._playerCloudInventories.TryGetValue(SteamId, out inv) == true && inv.SavedAt > SavedAt ? inv.SavedAt : SavedAt;
             });
         }
 
