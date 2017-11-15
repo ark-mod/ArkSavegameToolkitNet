@@ -50,8 +50,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArkCloudInventoryDino.cs" />
+    <Compile Include="ArkCloudInventoryCharacter.cs" />
     <Compile Include="ArkCloudInventoryItem.cs" />
     <Compile Include="ArkClusterData.cs" />
+    <Compile Include="ArkClusterDataResult.cs" />
     <Compile Include="ArkGameData.cs" />
     <Compile Include="ArkClusterDataBase.cs" />
     <Compile Include="ArkGameDataBase.cs" />

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ArkName = ArkSavegameToolkitNet.Types.ArkName;
@@ -14,6 +15,7 @@ namespace ArkSavegameToolkitNet.Domain
 {
     public class ArkClusterData : ArkClusterDataBase
     {
+        private readonly Regex r_clusterFiles = new Regex(@"\d+$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         private readonly string _savePath;
         private readonly bool _loadOnlyPropertiesInDomain;
         private dynamic[] _newData;
@@ -22,6 +24,37 @@ namespace ArkSavegameToolkitNet.Domain
         {
             _savePath = savePath;
             _loadOnlyPropertiesInDomain = loadOnlyPropertiesInDomain;
+        }
+
+        public static ArkClusterDataResult<ArkCloudInventory> LoadSingle(string savePath, CancellationToken ct, bool loadOnlyPropertiesInDomain = false, bool decouple = true)
+        {
+            var success = false;
+            var cancelled = false;
+            var st = Stopwatch.StartNew();
+            ArkCloudInventory data = null;
+
+            try
+            {
+                var exclusivePropertyNameTree = loadOnlyPropertiesInDomain ? ArkClusterDataContainerBase._alldependencies : null;
+                var arkcloudInventories = new ArkSavegameToolkitNet.ArkCloudInventory(savePath, exclusivePropertyNameTree: exclusivePropertyNameTree);
+
+                data = arkcloudInventories.InventoryData?.AsCloudInventory(arkcloudInventories.SteamId, SaveState.FromSaveTime(arkcloudInventories.SaveTime), arkcloudInventories.InventoryDinoData);
+                if (decouple) data?.Decouple();
+                success = true;
+            }
+            catch (OperationCanceledException)
+            {
+                cancelled = true;
+            }
+
+            return new ArkClusterDataResult<ArkCloudInventory>
+            {
+                Success = success,
+                Cancelled = cancelled,
+                Elapsed = st.Elapsed,
+                FilePath = savePath,
+                Data = data
+            };
         }
 
         public ArkClusterDataUpdateResult Update(CancellationToken ct, bool deferApplyNewData = false)
@@ -36,7 +69,7 @@ namespace ArkSavegameToolkitNet.Domain
                 var exclusivePropertyNameTree = _loadOnlyPropertiesInDomain ? ArkClusterDataContainerBase._alldependencies : null;
 
                 // Extract all cluster data
-                var arkcloudInventories = Directory.GetFiles(_savePath, "*", SearchOption.TopDirectoryOnly).Select(x => new ArkSavegameToolkitNet.ArkCloudInventory(x, exclusivePropertyNameTree: exclusivePropertyNameTree)).ToArray();
+                var arkcloudInventories = Directory.GetFiles(_savePath, "*", SearchOption.TopDirectoryOnly).Where(x => /*avoid loading duplicate cluster files*/ r_clusterFiles.IsMatch(Path.GetFileName(x))).Select(x => new ArkSavegameToolkitNet.ArkCloudInventory(x, exclusivePropertyNameTree: exclusivePropertyNameTree)).ToArray();
 
                 var cloudInventories = arkcloudInventories.Where(x => x.InventoryData != null).Select(x => x.InventoryData.AsCloudInventory(x.SteamId, SaveState.FromSaveTime(x.SaveTime), x.InventoryDinoData)).ToArray();
 

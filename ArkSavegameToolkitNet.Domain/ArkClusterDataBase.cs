@@ -19,6 +19,7 @@ namespace ArkSavegameToolkitNet.Domain
 
         internal Dictionary<string, ArkCloudInventory> _playerCloudInventories;
         internal Dictionary<string, ArkCloudInventoryDino[]> _playerCloudCreatures;
+        internal Dictionary<string, ArkCloudInventoryCharacter[]> _playerCloudCharacters;
         internal Dictionary<string, ArkCloudInventoryItem[]> _playerCloudItems;
         internal ArkCloudInventoryDino[] _cloudCreatures;
 
@@ -28,6 +29,7 @@ namespace ArkSavegameToolkitNet.Domain
             other._cloudCreatures = _cloudCreatures;
             other._playerCloudInventories = _playerCloudInventories;
             other._playerCloudCreatures = _playerCloudCreatures;
+            other._playerCloudCharacters = _playerCloudCharacters;
             other._playerCloudItems = _playerCloudItems;
         }
 
@@ -38,6 +40,8 @@ namespace ArkSavegameToolkitNet.Domain
             _playerCloudInventories = Inventories.ToDictionary(x => x.SteamId, x => x);
 
             _playerCloudCreatures = Inventories.ToDictionary(x => x.SteamId, x => x.Dinos);
+
+            _playerCloudCharacters = Inventories.ToDictionary(x => x.SteamId, x => x.Characters);
 
             _playerCloudItems = Inventories.ToDictionary(x => x.SteamId, x => x.Items);
 

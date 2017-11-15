@@ -13,6 +13,7 @@ namespace ArkSavegameToolkitNet.Domain
         internal static readonly ArkNameTree _alldependencies = ArkNameTree.Merge(
             ArkCloudInventory._dependencies,
             ArkCloudInventoryItem._dependencies,
+            ArkCloudInventoryCharacter._dependencies,
             ArkCloudInventoryDino._dependencies,
             ArkCreature._dependencies,
             ArkTamedCreatureAncestor._dependencies,
