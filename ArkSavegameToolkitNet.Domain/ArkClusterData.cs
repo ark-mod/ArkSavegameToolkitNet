@@ -15,7 +15,7 @@ namespace ArkSavegameToolkitNet.Domain
 {
     public class ArkClusterData : ArkClusterDataBase
     {
-        private readonly Regex r_clusterFiles = new Regex(@"\d+$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+        private readonly Regex r_clusterFiles = new Regex(@"^\d+$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         private readonly string _savePath;
         private readonly bool _loadOnlyPropertiesInDomain;
         private dynamic[] _newData;
