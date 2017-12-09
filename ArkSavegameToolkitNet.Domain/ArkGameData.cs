@@ -57,7 +57,7 @@ namespace ArkSavegameToolkitNet.Domain
         }
 
         /// <param name="externalPlayerData">Supply the update operation with external player data. This is a way to make sure transfered players are not lost inbetween saves.</param>
-        public ArkGameDataUpdateResult Update(CancellationToken ct, ArkPlayerExternal[] externalPlayerData = null, bool deferApplyNewData = false)
+        public ArkGameDataUpdateResult Update(CancellationToken ct, ArkPlayerExternal[] externalPlayerData = null, bool deferApplyNewData = false, ArkAnonymizeData anonymize = null)
         {
             var success = false;
             var cancelled = false;
@@ -74,10 +74,29 @@ namespace ArkSavegameToolkitNet.Domain
                 save.LoadEverything();
                 ct.ThrowIfCancellationRequested();
 
-                var arktribes = Directory.GetFiles(directoryPath, "*.arktribe", SearchOption.TopDirectoryOnly).Select(x => new ArkSavegameToolkitNet.ArkTribe(x, exclusivePropertyNameTree: exclusivePropertyNameTree)).ToArray();
+                var arktribes = Directory.GetFiles(directoryPath, "*.arktribe", SearchOption.TopDirectoryOnly).Select(x =>
+                {
+                    try
+                    {
+                        return new ArkSavegameToolkitNet.ArkTribe(x, exclusivePropertyNameTree: exclusivePropertyNameTree);
+                    }
+                    catch (Exception ex) { Debug.WriteLine($"Failed to extract tribe profile '{x}': {ex.Message}"); }
+
+                    return null;
+                    
+                }).Where(x => x != null).ToArray();
                 ct.ThrowIfCancellationRequested();
 
-                var arkprofiles = Directory.GetFiles(directoryPath, "*.arkprofile", SearchOption.TopDirectoryOnly).Select(x => new ArkProfile(x, exclusivePropertyNameTree: exclusivePropertyNameTree)).ToArray();
+                var arkprofiles = Directory.GetFiles(directoryPath, "*.arkprofile", SearchOption.TopDirectoryOnly).Select(x =>
+                {
+                    try
+                    {
+                        return new ArkProfile(x, exclusivePropertyNameTree: exclusivePropertyNameTree);
+                    }
+                    catch(Exception ex) { Debug.WriteLine($"Failed to extract player profile '{x}': {ex.Message}"); }
+
+                    return null;
+                }).Where(x => x != null).ToArray();
                 ct.ThrowIfCancellationRequested();
 
                 // Remove duplicates from object collection (objects are sometimes duplicated for structures, creatures etc.)
@@ -124,8 +143,14 @@ namespace ArkSavegameToolkitNet.Domain
                 var players = keyedProfiles.Select(x =>
                 {
                     var player = playerdict[x.playerId]?.FirstOrDefault();
-                    return x.profile.Profile.AsPlayer(player, x.profile.SaveTime, save.SaveState);
-                }).ToArray();
+                    try
+                    {
+                        return x.profile.Profile.AsPlayer(player, x.profile.SaveTime, save.SaveState);
+                    }
+                    catch (Exception ex) { Debug.WriteLine($"Failed to project player profile as domain object '{x.profile._fileName}': {ex.Message}"); }
+
+                    return null;
+                }).Where(x => x != null).ToArray();
                 var externalPlayers = externalPlayerData != null ?
                     externalPlayerData.Where(x => !profileSteamIds.Contains(x.SteamId, StringComparer.OrdinalIgnoreCase)).Select(x => x.AsPlayer()).ToArray() 
                     : new ArkPlayer[] { };
@@ -136,7 +161,7 @@ namespace ArkSavegameToolkitNet.Domain
                 var items = objects.Where(x => x.IsItem).Select(x => x.AsItem(save.SaveState)).ToArray();
                 var structures = objects.Where(x => x.IsStructure).Select(x => x.AsStructure(save.SaveState)).ToArray();
 
-                ApplyOrSaveNewData(deferApplyNewData, save, tamed, wild, allplayers, tribes, items, structures);
+                ApplyOrSaveNewData(deferApplyNewData, save, tamed, wild, allplayers, tribes, items, structures, anonymize);
 
                 success = true;
             }
@@ -156,27 +181,36 @@ namespace ArkSavegameToolkitNet.Domain
         {
             if (_newData != null)
             {
-                ApplyNewData(_newData[0], _newData[1], _newData[2], _newData[3], _newData[4], _newData[5], _newData[6], decouple);
+                ApplyNewData(_newData[0], _newData[1], _newData[2], _newData[3], _newData[4], _newData[5], _newData[6], decouple, _newData[7]);
                 _newData = null;
                 return true;
             }
             else return false;
         }
 
-        private void ApplyOrSaveNewData(bool deferApplyNewData, ArkSavegame save, ArkTamedCreature[] tamed, ArkWildCreature[] wild, ArkPlayer[] players, ArkTribe[] tribes, ArkItem[] items, ArkStructure[] structures)
+        private void ApplyOrSaveNewData(bool deferApplyNewData, ArkSavegame save, ArkTamedCreature[] tamed, ArkWildCreature[] wild, ArkPlayer[] players, ArkTribe[] tribes, ArkItem[] items, ArkStructure[] structures, ArkAnonymizeData anonymize = null)
         {
             if (deferApplyNewData)
             {
-                _newData = new dynamic[] { save, tamed, wild, players, tribes, items, structures };
+                _newData = new dynamic[] { save, tamed, wild, players, tribes, items, structures, anonymize };
             }
             else
             {
-                ApplyNewData(save, tamed, wild, players, tribes, items, structures);
+                ApplyNewData(save, tamed, wild, players, tribes, items, structures, true, anonymize);
             }
         }
 
-        private void ApplyNewData(ArkSavegame save, ArkTamedCreature[] tamed, ArkWildCreature[] wild, ArkPlayer[] players, ArkTribe[] tribes, ArkItem[] items, ArkStructure[] structures, bool decouple = true)
+        private void ApplyNewData(ArkSavegame save, ArkTamedCreature[] tamed, ArkWildCreature[] wild, ArkPlayer[] players, ArkTribe[] tribes, ArkItem[] items, ArkStructure[] structures, bool decouple = true, ArkAnonymizeData anonymize = null)
         {
+            // Anonymize data if requested
+            if (anonymize != null)
+            {
+                foreach (var i in players) anonymize.Do(i);
+                foreach (var i in tribes) anonymize.Do(i);
+                foreach (var i in tamed) anonymize.Do(i);
+                foreach (var i in structures) anonymize.Do(i);
+            }
+
             // Setup relations in the domain model between entities
             var newGameData = new ArkGameDataBase(save.SaveState, tamed, wild, players, tribes, items, structures);
             newGameData.Initialize(_clusterData);

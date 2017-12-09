@@ -80,9 +80,9 @@ namespace ArkSavegameToolkitNet.Domain
             Id = tribeData.GetPropertyValue<int>(_tribeID);
             Name = tribeData.GetPropertyValue<string>(_tribeName);
             OwnerPlayerId = tribeData.GetPropertyValue<int>(_ownerPlayerDataID);
-            MemberIds = tribeData.GetPropertyValue<ArkArrayInteger>(_membersPlayerDataID)?.Where(x => x != null).Select(x => x.Value).ToArray();
-            AdminIds = tribeData.GetPropertyValue<ArkArrayInteger>(_tribeAdmins)?.Where(x => x != null).Select(x => x.Value).ToArray();
-            MemberNames = tribeData.GetPropertyValue<ArkArrayString>(_membersPlayerName)?.ToArray();
+            MemberIds = tribeData.GetPropertyValue<ArkArrayInteger>(_membersPlayerDataID)?.Where(x => x != null).Select(x => x.Value).ToArray() ?? new int[] {};
+            AdminIds = tribeData.GetPropertyValue<ArkArrayInteger>(_tribeAdmins)?.Where(x => x != null).Select(x => x.Value).ToArray() ?? new int[] { };
+            MemberNames = tribeData.GetPropertyValue<ArkArrayString>(_membersPlayerName)?.ToArray() ?? new string[] { };
             Logs = tribeData.GetPropertyValue<ArkArrayString>(_tribeLog)?.ToArray();
 
             SavedAt = tribeSaveTime;

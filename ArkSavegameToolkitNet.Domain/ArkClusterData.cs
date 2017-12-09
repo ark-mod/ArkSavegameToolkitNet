@@ -57,11 +57,10 @@ namespace ArkSavegameToolkitNet.Domain
             };
         }
 
-        public ArkClusterDataUpdateResult Update(CancellationToken ct, bool deferApplyNewData = false)
+        public ArkClusterDataUpdateResult Update(CancellationToken ct, bool deferApplyNewData = false, ArkAnonymizeData anonymize = null)
         {
             var success = false;
             var cancelled = false;
-            ArkSavegame save = null;
             var st = Stopwatch.StartNew();
 
             try
@@ -80,10 +79,6 @@ namespace ArkSavegameToolkitNet.Domain
             catch (OperationCanceledException)
             {
                 cancelled = true;
-            }
-            finally
-            {
-                save?.Dispose();
             }
 
             return new ArkClusterDataUpdateResult { Success = success, Cancelled = cancelled, Elapsed = st.Elapsed };

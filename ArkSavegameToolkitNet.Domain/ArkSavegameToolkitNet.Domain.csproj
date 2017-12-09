@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArkAnonymizeData.cs" />
     <Compile Include="ArkCloudInventoryDino.cs" />
     <Compile Include="ArkCloudInventoryCharacter.cs" />
     <Compile Include="ArkCloudInventoryItem.cs" />
@@ -79,6 +80,9 @@
     <Compile Include="IArkClusterData.cs" />
     <Compile Include="IArkGameData.cs" />
     <Compile Include="IGameObjectExtensions.cs" />
+    <Compile Include="Internal\DictionaryExtensions.cs" />
+    <Compile Include="Internal\ExpandoObjectHelper.cs" />
+    <Compile Include="Internal\QueryableExtensions.cs" />
     <Compile Include="Internal\StringExtensions.cs" />
     <Compile Include="ISaveStateExtensions.cs" />
     <Compile Include="MapResources.Designer.cs">

@@ -49,7 +49,7 @@ namespace ArkSavegameToolkitNet
         private GameObject _profile;
         private ArkNameCache _arkNameCache;
         private ArkNameTree _exclusivePropertyNameTree;
-        private string _fileName;
+        internal string _fileName;
 
         public ArkProfile()
         {
