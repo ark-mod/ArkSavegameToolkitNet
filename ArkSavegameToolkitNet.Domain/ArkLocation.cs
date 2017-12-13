@@ -17,6 +17,7 @@ namespace ArkSavegameToolkitNet.Domain
             { "TheIsland", Tuple.Create(50.0f, 8000.0f, 50.0f, 8000.0f) },
             { "TheCenter", Tuple.Create(30.34223747253418f, 9584.0f, 55.10416793823242f, 9600.0f) },
             { "ScorchedEarth_P", Tuple.Create(50.0f, 8000.0f, 50.0f, 8000.0f) },
+            { "Aberration_P", Tuple.Create(50.0f, 8000.0f, 50.0f, 8000.0f) },
             { "Valhalla", Tuple.Create(48.813560485839844f, 14750.0f, 48.813560485839844f, 14750.0f) },
             { "MortemTupiu", Tuple.Create(32.479148864746094f, 20000.0f, 40.59893798828125f, 16000.0f) },
             { "ShigoIslands", Tuple.Create(50.0f, 8128.0f, 50.0f, 8128.0f) },
@@ -43,6 +44,7 @@ namespace ArkSavegameToolkitNet.Domain
                     { "TheIsland", Tuple.Create(island.Width, island.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
                     { "TheCenter", Tuple.Create(center.Width, center.Height, -2.5f, 1f, 104.5f, 101f) },
                     { "ScorchedEarth_P", Tuple.Create(scorched.Width, scorched.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
+                    { "Aberration_P", Tuple.Create(1024, 1024, 7.2f, 7.2f, 92.8f, 92.8f) },
                     { "Ragnarok", Tuple.Create(ragnarok.Width, ragnarok.Height, 0.0f, 0.0f, 100.0f, 100.0f) }
                 };
             }

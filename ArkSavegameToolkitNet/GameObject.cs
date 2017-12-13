@@ -37,7 +37,8 @@ namespace ArkSavegameToolkitNet
             IsDroppedItem = 1 << 13,
             IsPlayerCharacter = 1 << 14,
             IsStructurePaintingComponent = 1 << 15,
-            IsSomethingElse = 1 << 16
+            IsDeathItemCache = 1 << 16,
+            IsSomethingElse = 1 << 17
         }
 
         private static ILog _logger = LogManager.GetLogger(typeof(GameObject));
@@ -79,6 +80,7 @@ namespace ArkSavegameToolkitNet
         public bool IsDroppedItem => (_isFlags & GameObjectIs.IsDroppedItem) == GameObjectIs.IsDroppedItem;
         public bool IsPlayerCharacter => (_isFlags & GameObjectIs.IsPlayerCharacter) == GameObjectIs.IsPlayerCharacter;
         public bool IsStructurePaintingComponent => (_isFlags & GameObjectIs.IsStructurePaintingComponent) == GameObjectIs.IsStructurePaintingComponent;
+        public bool IsDeathItemCache => (_isFlags & GameObjectIs.IsDeathItemCache) == GameObjectIs.IsDeathItemCache;
         public bool IsSomethingElse => (_isFlags & GameObjectIs.IsSomethingElse) == GameObjectIs.IsSomethingElse;
 
         //public bool IsCreature { get; set; }
@@ -263,6 +265,12 @@ namespace ArkSavegameToolkitNet
 
                 if (Properties.ContainsKey(_ownerName) || Properties.ContainsKey(_bHasResetDecayTime))
                 {
+                    if (ClassName.Token.StartsWith("DeathItemCache_"))
+                    {
+                        _isFlags |= GameObjectIs.IsDeathItemCache;
+                        goto SkipRest;
+                    }
+
                     _isFlags |= GameObjectIs.IsStructure;
                     goto SkipRest;
                 }
