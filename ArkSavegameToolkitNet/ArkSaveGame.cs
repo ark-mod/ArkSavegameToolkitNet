@@ -54,6 +54,34 @@ namespace ArkSavegameToolkitNet
         }
         private IList<EmbeddedData> _embeddedData = new List<EmbeddedData>();
 
+        public IList<string> HibernationClassNames
+        {
+            get
+            {
+                return _hibernationClassNames;
+            }
+        }
+        private IList<string> _hibernationClassNames = new List<string>();
+
+        public IList<int> HibernationIndices
+        {
+            get
+            {
+                return _hibernationIndices;
+            }
+        }
+        private IList<int> _hibernationIndices = new List<int>();
+
+        public IList<HibernationEntry> HibernationEntries
+        {
+            get
+            {
+                return _hibernationEntries;
+            }
+        }
+        private IList<HibernationEntry> _hibernationEntries = new List<HibernationEntry>();
+
+
         [JsonProperty]
         public short SaveVersion { get; set; }
         [JsonProperty]
@@ -63,7 +91,7 @@ namespace ArkSavegameToolkitNet
         public DateTime SaveTime { get; set; }
         public SaveState SaveState { get; set; }
 
-        protected internal int binaryDataOffset;
+        protected internal int hibernationDataOffset;
         protected internal int nameTableOffset;
         protected internal int propertiesBlockOffset;
         private string _fileName;
@@ -125,7 +153,7 @@ namespace ArkSavegameToolkitNet
             //}
 
             readBinary(_archive, _mmf);
-
+  
             return true;
         }
 
@@ -190,6 +218,10 @@ namespace ArkSavegameToolkitNet
             else archive.Position = _gameObjectsOffset;
             readBinaryObjects(archive);
             readBinaryObjectProperties(archive, mmf);
+            if (SaveVersion > 6)
+            {
+                readBinaryHibernation(archive );
+            }
         }
 
         private void readBinaryBase(ArkArchive archive)
@@ -247,7 +279,7 @@ namespace ArkSavegameToolkitNet
             }
             else if (SaveVersion == 7 || SaveVersion == 8)
             {
-                binaryDataOffset = archive.GetInt();
+                hibernationDataOffset = archive.GetInt();
                 var unknownValue = archive.GetInt();
                 if (unknownValue != 0)
                 {
@@ -262,7 +294,7 @@ namespace ArkSavegameToolkitNet
             }
             else if (SaveVersion == 9)
             {
-                binaryDataOffset = archive.GetInt();
+                hibernationDataOffset = archive.GetInt();
                 var unknownValue = archive.GetInt();
                 if (unknownValue != 0)
                 {
@@ -385,8 +417,9 @@ namespace ArkSavegameToolkitNet
                 catch (AggregateException ae)
                 {
                     success = false;
-                    ae.Handle(ex => {
-                        if (ex is IOException 
+                    ae.Handle(ex =>
+                    {
+                        if (ex is IOException
                             && ex.Message.IndexOf("Not enough storage is available to process this command.", StringComparison.OrdinalIgnoreCase) != -1)
                         {
                             _logger.Error($"Not enough memory available to load properties with this degree of parallelism.");
@@ -404,6 +437,41 @@ namespace ArkSavegameToolkitNet
         protected void readBinaryObjectPropertiesImpl(int n, ArkArchive archive)
         {
             Objects[n].loadProperties(archive, (n < Objects.Count - 1) ? Objects[n + 1] : null, propertiesBlockOffset);
+        }
+
+        protected void readBinaryHibernation(ArkArchive archive)
+        {
+            archive.Position = hibernationDataOffset;
+            var unk1 = archive.GetInt();
+            var unk2 = archive.GetInt();
+            var unk3 = archive.GetInt();
+            var unk4 = archive.GetInt();
+            if (archive.Position == nameTableOffset) return;
+            var unk5 = archive.GetInt();
+            var unk6 = archive.GetInt();
+            var classCount = archive.GetInt();
+            _hibernationClassNames.Clear();
+
+            for (int i = 0; i <= classCount - 1; i++)
+            {
+                _hibernationClassNames.Add(archive.GetString());
+            }
+
+            var indicesCount = archive.GetInt();
+            if (classCount != indicesCount) throw new NotSupportedException($"Hibernation classCount:{classCount}<>indicesCount:{indicesCount}");
+            _hibernationIndices.Clear();
+            for (int i = 0; i <= indicesCount - 1; i++)
+            {
+                _hibernationIndices.Add(archive.GetInt());
+            }
+
+            var entriesCount = archive.GetInt();
+            _hibernationEntries.Clear();
+            // needs more refactoring to use parallel execution
+            for (int i = 0; i <= entriesCount - 1; i++)
+            {
+                _hibernationEntries.Add(new HibernationEntry(archive));
+            }
         }
 
         #region IDisposable Support

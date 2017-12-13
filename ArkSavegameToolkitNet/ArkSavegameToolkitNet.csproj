@@ -87,6 +87,7 @@
     <Compile Include="Exceptions\UnreadablePropertyException.cs" />
     <Compile Include="GameObjectReader.cs" />
     <Compile Include="GameObject.cs" />
+    <Compile Include="HibernationEntry.cs" />
     <Compile Include="ICloudInventoryDinoData.cs" />
     <Compile Include="ISaveState.cs" />
     <Compile Include="Property\ExcludedProperty.cs" />

@@ -22,7 +22,9 @@ namespace ArkSavegameToolkitNet
         private ArkNameCache _arkNameCache;
         private ArkStringCache _arkStringCache;
         private ArkNameTree _exclusivePropertyNameTree;
-
+        private int _nameTableOffset = 1;   // 0 for hibernation object archives
+        private bool _isInstanceInTable ;   // true only for hibernation object archives
+       // private bool _isSlice;              // true if this a subarchive
         public ArkArchive(MemoryMappedViewAccessor va, long size, ArkNameCache arkNameCache = null, ArkStringCache arkStringCache = null, ArkNameTree exclusivePropertyNameTree = null)
         {
             _va = va;
@@ -40,6 +42,20 @@ namespace ArkSavegameToolkitNet
             _arkNameCache = toClone._arkNameCache;
             _arkStringCache = toClone._arkStringCache;
             _exclusivePropertyNameTree = toClone._exclusivePropertyNameTree;
+        }
+
+       /// <summary>Creates a subArchive of an existing archive (slice)</summary>
+       /// <param name="toClone">the archive to clone</param>
+       /// <param name="offset">position of the sub archive</param>
+       /// <param name="size">size of the sub archive</param>
+        public ArkArchive Slice ( long offset,int size)
+        {
+            ArkArchive sliced = new ArkArchive(this, this._va);
+            _nameTable = null;
+            sliced._size = size+1;
+            sliced._offset = offset;
+            //sliced._isSlice = true;
+            return sliced;
         }
 
         public ArkNameTree ExclusivePropertyNameTree => _exclusivePropertyNameTree;
@@ -61,7 +77,7 @@ namespace ArkSavegameToolkitNet
                 _position = value;
             }
         }
-
+        private long _offset ;
         public long Size => _size;
 
         public IReadOnlyList<string> NameTable
@@ -75,6 +91,17 @@ namespace ArkSavegameToolkitNet
                 if (value != null) _nameTable = new List<string>(value) as IReadOnlyList<string>;
                 else _nameTable = null;
             }
+        }
+
+        /// <summary>Set the nameTable and it's properties</summary>
+        /// <param name="NameTable">the nameTable to set</param>
+        /// <param name="nameTableOffset">the offset where indices start</param>
+        /// <param name="isInstanceInTable">true to get arkName from nameTable</param>
+        public void SetNameTable(List<string> nameTable, int nameTableOffset, bool isInstanceInTable)
+        {
+            this.NameTable = nameTable;
+            this._nameTableOffset = nameTableOffset;
+            this._isInstanceInTable = isInstanceInTable;
         }
 
         public ArkName[] GetNames(long position)
@@ -99,14 +126,17 @@ namespace ArkSavegameToolkitNet
             else
             {
                 var id = GetInt(position);
-
-                if (id < 1 || id > _nameTable.Count)
+                // some tables start with an offset of 1
+                var internalID = id - _nameTableOffset;
+                if (internalID < 0 || id >= _nameTable.Count)
                 {
                     _logger.Warn($"Found invalid nametable index {id} at {position:X}");
                     return null;
                 }
 
-                var nameString = _nameTable[id - 1];
+                var nameString = _nameTable[internalID];
+                // only true for hibernation entries
+                if (_isInstanceInTable) return _arkNameCache.Create(nameString);
                 var nameIndex = GetInt(position + 4);
 
                 return _arkNameCache.Create(nameString, nameIndex);
@@ -123,14 +153,12 @@ namespace ArkSavegameToolkitNet
             else
             {
                 var id = GetInt();
+                var internalID = id - _nameTableOffset;
+                if (internalID < 0 || internalID >= _nameTable.Count) throw new IndexOutOfRangeException($"invalid name index: {id} at {_position - 4}");
 
-                if (id < 1 || id > _nameTable.Count)
-                {
-                    _logger.Warn($"Found invalid nametable index {id} at {_position - 4:X}");
-                    return null;
-                }
-
-                var nameString = _nameTable[id - 1];
+               var nameString = _nameTable[internalID];
+                // only true for hibernation entries
+                if (_isInstanceInTable) return _arkNameCache.Create(nameString);
                 var nameIndex = GetInt();
 
                 return _arkNameCache.Create(nameString, nameIndex);
@@ -145,7 +173,10 @@ namespace ArkSavegameToolkitNet
             }
             else
             {
-                Position += 8;
+                if (_isInstanceInTable)
+                    _position += 4;
+                else
+                    _position += 8;
             }
         }
 
@@ -180,7 +211,7 @@ namespace ArkSavegameToolkitNet
             if (multibyte)
             {
                 var buffer = new char[absSize];
-                var count = _va.ReadArray(position + 4, buffer, 0, absSize);
+                var count = _va.ReadArray(_offset + _position + 4, buffer, 0, absSize);
                 var result = new string(buffer, 0, absSize - 1);
 
                 //return result;
@@ -189,7 +220,7 @@ namespace ArkSavegameToolkitNet
             else
             {
                 var buffer = new byte[absSize];
-                var count = _va.ReadArray(_position + 4, buffer, 0, absSize);
+                var count = _va.ReadArray(_offset+_position + 4, buffer, 0, absSize);
 
                 //return Encoding.ASCII.GetString(buffer, 0, absSize - 1);
                 return _arkStringCache.Add(Encoding.ASCII.GetString(buffer, 0, absSize - 1));
@@ -214,7 +245,7 @@ namespace ArkSavegameToolkitNet
             if (multibyte)
             {
                 var buffer = new char[absSize];
-                var count = _va.ReadArray(_position, buffer, 0, absSize);
+                var count = _va.ReadArray(_offset + _position, buffer, 0, absSize);
                 _position += absSize * 2;
                 var result = new string(buffer, 0, absSize - 1);
 
@@ -224,7 +255,7 @@ namespace ArkSavegameToolkitNet
             else
             {
                 var buffer = new byte[absSize];
-                var count = _va.ReadArray(_position, buffer, 0, absSize);
+                var count = _va.ReadArray(_offset + _position, buffer, 0, absSize);
                 _position += absSize;
 
                 //return Encoding.ASCII.GetString(buffer, 0, absSize - 1);
@@ -260,7 +291,7 @@ namespace ArkSavegameToolkitNet
                 throw new OverflowException();
             }
 
-            var value = _va.ReadInt32(position);
+            var value = _va.ReadInt32(_offset + _position);
 
             return value;
         }
@@ -274,7 +305,7 @@ namespace ArkSavegameToolkitNet
                 throw new OverflowException();
             }
 
-            var value = _va.ReadInt32(_position);
+            var value = _va.ReadInt32(_offset + _position);
             _position += size;
 
             return value;
@@ -290,7 +321,7 @@ namespace ArkSavegameToolkitNet
                 throw new OverflowException();
             }
 
-            var value = _va.ReadArray(_position, buffer, 0, length);
+            var value = _va.ReadArray(_offset + _position, buffer, 0, length);
             _position += length;
 
             return buffer;
@@ -305,7 +336,7 @@ namespace ArkSavegameToolkitNet
                 throw new OverflowException();
             }
 
-            var value = _va.ReadSByte(_position);
+            var value = _va.ReadSByte(_offset + _position);
             _position += size;
 
             return value;
@@ -320,7 +351,7 @@ namespace ArkSavegameToolkitNet
                 throw new OverflowException();
             }
 
-            var value = _va.ReadInt64(_position);
+            var value = _va.ReadInt64(_offset + _position);
             _position += size;
 
             return value;
@@ -335,7 +366,7 @@ namespace ArkSavegameToolkitNet
                 throw new OverflowException();
             }
 
-            var value = _va.ReadInt16(_position);
+            var value = _va.ReadInt16(_offset + _position);
             _position += size;
 
             return value;
@@ -350,7 +381,7 @@ namespace ArkSavegameToolkitNet
                 throw new OverflowException();
             }
 
-            var value = _va.ReadDouble(_position);
+            var value = _va.ReadDouble(_offset + _position);
             _position += size;
 
             return value;
@@ -365,7 +396,7 @@ namespace ArkSavegameToolkitNet
                 throw new OverflowException();
             }
 
-            var value = _va.ReadSingle(_position);
+            var value = _va.ReadSingle(_offset + _position);
             _position += size;
 
             return value;
