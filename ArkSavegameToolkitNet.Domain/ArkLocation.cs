@@ -31,20 +31,21 @@ namespace ArkSavegameToolkitNet.Domain
 
         static ArkLocation()
         {
-            System.Drawing.Bitmap island = null, center = null, scorched = null, ragnarok = null;
+            System.Drawing.Bitmap island = null, center = null, scorched = null, ragnarok = null, aberration = null;
             try
             {
                 island = MapResources.topo_map_TheIsland;
                 center = MapResources.topo_map_TheCenter;
                 scorched = MapResources.topo_map_ScorchedEarth_P;
                 ragnarok = MapResources.topo_map_Ragnarok;
+                aberration = MapResources.topo_map_Aberration_P;
 
                 _topoMapCalcs = new Dictionary<string, Tuple<int, int, float, float, float, float>>
                 {
                     { "TheIsland", Tuple.Create(island.Width, island.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
                     { "TheCenter", Tuple.Create(center.Width, center.Height, -2.5f, 1f, 104.5f, 101f) },
                     { "ScorchedEarth_P", Tuple.Create(scorched.Width, scorched.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
-                    { "Aberration_P", Tuple.Create(1024, 1024, 7.2f, 7.2f, 92.8f, 92.8f) },
+                    { "Aberration_P", Tuple.Create(aberration.Width, aberration.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
                     { "Ragnarok", Tuple.Create(ragnarok.Width, ragnarok.Height, 0.0f, 0.0f, 100.0f, 100.0f) }
                 };
             }
@@ -54,6 +55,7 @@ namespace ArkSavegameToolkitNet.Domain
                 center?.Dispose();
                 scorched?.Dispose();
                 ragnarok?.Dispose();
+                aberration?.Dispose();
             }
         }
 
