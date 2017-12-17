@@ -40,12 +40,14 @@ namespace ArkSavegameToolkitNet.Domain
                 ragnarok = MapResources.topo_map_Ragnarok;
                 aberration = MapResources.topo_map_Aberration_P;
 
+                //painted-maps are divided into a 10x10 grid, lacking precise offsets and should instead align with the grid (0.0f, 0.0f, 100.0f, 100.0f)
+                //topo-maps offsets are calculated using two easily identifiable points on the map and reversing the formula for TopoMapX/TopoMapY
                 _topoMapCalcs = new Dictionary<string, Tuple<int, int, float, float, float, float>>
                 {
                     { "TheIsland", Tuple.Create(island.Width, island.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
                     { "TheCenter", Tuple.Create(center.Width, center.Height, -2.5f, 1f, 104.5f, 101f) },
                     { "ScorchedEarth_P", Tuple.Create(scorched.Width, scorched.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
-                    { "Aberration_P", Tuple.Create(aberration.Width, aberration.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
+                    { "Aberration_P", Tuple.Create(aberration.Width, aberration.Height, 0.0f, 0.0f, 100.0f, 100.0f) },
                     { "Ragnarok", Tuple.Create(ragnarok.Width, ragnarok.Height, 0.0f, 0.0f, 100.0f, 100.0f) }
                 };
             }
