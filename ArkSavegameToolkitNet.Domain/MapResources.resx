@@ -133,4 +133,16 @@
   <data name="topo_map_TheIsland" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\The_Island_Topographic_Map.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="topo_map_CrystalIsles" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Crystal_Isles_Topographic_Map.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="topo_map_ShigoIslands" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\ShigoIslands_Topographic_Map.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="topo_map_TheVolcano" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\TheVolcano_Topographic_Map.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="topo_map_Valguero_P" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Valguero_Topographic_Map.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
