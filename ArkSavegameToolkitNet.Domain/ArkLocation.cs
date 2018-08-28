@@ -49,7 +49,7 @@ namespace ArkSavegameToolkitNet.Domain
                 valguero = MapResources.topo_map_Valguero_P;
 
                 //painted-maps are divided into a 10x10 grid, lacking precise offsets and should instead align with the grid (0.0f, 0.0f, 100.0f, 100.0f)
-                //topo-maps offsets are calculated using two easily identifiable points on the map and reversing the formula for TopoMapX/TopoMapY
+                //topo-maps offsets are calculated using two easily identifiable points on the map and reversing the formula for TopoMapX/TopoMapY val-2.95f, 0.0f, 86.3f, 89.0f
                 _topoMapCalcs = new Dictionary<string, Tuple<int, int, float, float, float, float>>
                 {
                     { "TheIsland", Tuple.Create(island.Width, island.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
@@ -60,7 +60,7 @@ namespace ArkSavegameToolkitNet.Domain
                     { "CrystalIsles", Tuple.Create(crystal.Width, crystal.Height, -1.7f, -1.5f, 99.3f, 101.0f) },
                     { "ShigoIslands", Tuple.Create(shigo.Width, shigo.Height, -2.0f, -1.6f, 99.8f, 101.0f) },
                     { "TheVolcano", Tuple.Create(volcano.Width, volcano.Height, -1.95f, -1.3f, 99.5f, 100.7f) },
-                    { "Valguero_P", Tuple.Create(valguero.Width, valguero.Height, 2.95f, 0.0f, 86.3f, 89.0f) }
+                    { "Valguero_P", Tuple.Create(valguero.Width, valguero.Height, -10.0f, -10.0f, 110.0f, 110.0f) }
                 };
             }
             finally
