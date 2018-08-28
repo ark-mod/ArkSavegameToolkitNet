@@ -25,7 +25,7 @@ namespace ArkSavegameToolkitNet.Domain
             { "TheVolcano", Tuple.Create(50.0f, 9181.0f, 50.0f, 9181.0f) },
             { "PGARK", Tuple.Create(0.0f, 6080.0f, 0.0f, 6080.0f) },
             { "CrystalIsles" , Tuple.Create(50.0f, 13718.0f, 50.0f, 13718.0f) },
-            { "Valguero_P" , Tuple.Create(49.958116419834943061f, 8161.6209476309226933f, 49.958116419834943061f, 8161.6209476309226933f) }
+            { "Valguero_P" , Tuple.Create(50.0f, 8161.0f, 50.0f, 8161.0f) }
             
         };
 
