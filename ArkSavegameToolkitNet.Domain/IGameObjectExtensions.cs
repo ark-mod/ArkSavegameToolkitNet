@@ -43,11 +43,17 @@ namespace ArkSavegameToolkitNet.Domain
             {
                 var className = self.ClassName.Token;
                 if (className.Equals("CropPlotSmall_SM_C", StringComparison.Ordinal)
-                    || className.Equals("CropPlotMedium_SM_C", StringComparison.Ordinal)
-                    || className.Equals("CropPlotLarge_SM_C", StringComparison.Ordinal))
-                    return new ArkStructureCropPlot(self, saveState);
-                if (className.Equals("ElectricGenerator_C", StringComparison.Ordinal))
-                    return new ArkStructureElectricGenerator(self, saveState);
+                  || className.Equals("CropPlotMedium_SM_C", StringComparison.Ordinal)
+                  || className.Equals("CropPlotLarge_SM_C", StringComparison.Ordinal)
+                  || className.Equals("BP_CropPlot_Small_C", StringComparison.Ordinal)
+                  || className.Equals("BP_CropPlot_Medium_C", StringComparison.Ordinal)
+                  || className.Equals("BP_CropPlot_Large_C", StringComparison.Ordinal))
+                  return new ArkStructureCropPlot(self, saveState);
+
+                if (className.Equals("ElectricGenerator_C", StringComparison.Ordinal)
+                  || className.Equals("BP_Generator_C", StringComparison.Ordinal))
+                   return new ArkStructureElectricGenerator(self, saveState);
+
             }
             return new ArkStructure(self, saveState);
         }
