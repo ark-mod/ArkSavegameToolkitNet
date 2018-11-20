@@ -18,6 +18,7 @@ namespace ArkSavegameToolkitNet.Domain
             { "TheCenter", Tuple.Create(30.34223747253418f, 9584.0f, 55.10416793823242f, 9600.0f) },
             { "ScorchedEarth_P", Tuple.Create(50.0f, 8000.0f, 50.0f, 8000.0f) },
             { "Aberration_P", Tuple.Create(50.0f, 8000.0f, 50.0f, 8000.0f) },
+            { "Extinction", Tuple.Create(50.0f, 8000.0f, 50.0f, 8000.0f) },
             { "Valhalla", Tuple.Create(48.813560485839844f, 14750.0f, 48.813560485839844f, 14750.0f) },
             { "MortemTupiu", Tuple.Create(32.479148864746094f, 20000.0f, 40.59893798828125f, 16000.0f) },
             { "ShigoIslands", Tuple.Create(50.001777870738339260f, 9562.0f, 50.001777870738339260f, 9562.0f) },
@@ -35,7 +36,7 @@ namespace ArkSavegameToolkitNet.Domain
 
         static ArkLocation()
         {
-            System.Drawing.Bitmap island = null, center = null, scorched = null, ragnarok = null, aberration = null, crystal = null, shigo = null, volcano = null, valguero = null;
+            System.Drawing.Bitmap island = null, center = null, scorched = null, ragnarok = null, aberration = null, extinction = null, crystal = null, shigo = null, volcano = null, valguero = null;
             try
             {
                 island = MapResources.topo_map_TheIsland;
@@ -43,6 +44,7 @@ namespace ArkSavegameToolkitNet.Domain
                 scorched = MapResources.topo_map_ScorchedEarth_P;
                 ragnarok = MapResources.topo_map_Ragnarok;
                 aberration = MapResources.topo_map_Aberration_P;
+                extinction = MapResources.topo_map_Extinction;
                 crystal = MapResources.topo_map_CrystalIsles;
                 shigo = MapResources.topo_map_ShigoIslands;
                 volcano = MapResources.topo_map_TheVolcano;
@@ -56,6 +58,7 @@ namespace ArkSavegameToolkitNet.Domain
                     { "TheCenter", Tuple.Create(center.Width, center.Height, -2.5f, 1f, 104.5f, 101f) },
                     { "ScorchedEarth_P", Tuple.Create(scorched.Width, scorched.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
                     { "Aberration_P", Tuple.Create(aberration.Width, aberration.Height, 0.0f, 0.0f, 100.0f, 100.0f) },
+                    { "Extinction", Tuple.Create(extinction.Width, extinction.Height, 0.0f, 0.0f, 100.0f, 100.0f) },
                     { "Ragnarok", Tuple.Create(ragnarok.Width, ragnarok.Height, 0.0f, 0.0f, 100.0f, 100.0f) },
                     { "CrystalIsles", Tuple.Create(crystal.Width, crystal.Height, -1.7f, -1.5f, 99.3f, 101.0f) },
                     { "ShigoIslands", Tuple.Create(shigo.Width, shigo.Height, -2.0f, -1.6f, 99.8f, 101.0f) },
@@ -70,6 +73,7 @@ namespace ArkSavegameToolkitNet.Domain
                 scorched?.Dispose();
                 ragnarok?.Dispose();
                 aberration?.Dispose();
+                extinction?.Dispose();
                 crystal?.Dispose();
                 shigo?.Dispose();
                 volcano?.Dispose();

@@ -145,4 +145,7 @@
   <data name="topo_map_Valguero_P" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Valguero_Topographic_Map.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="topo_map_Extinction" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\topo_map_extinction.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
