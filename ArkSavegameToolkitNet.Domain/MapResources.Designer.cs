@@ -73,6 +73,26 @@ namespace ArkSavegameToolkitNet.Domain {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap topo_map_CrystalIsles {
+            get {
+                object obj = ResourceManager.GetObject("topo_map_CrystalIsles", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap topo_map_Extinction {
+            get {
+                object obj = ResourceManager.GetObject("topo_map_Extinction", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap topo_map_Ragnarok {
             get {
                 object obj = ResourceManager.GetObject("topo_map_Ragnarok", resourceCulture);
@@ -93,6 +113,16 @@ namespace ArkSavegameToolkitNet.Domain {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap topo_map_ShigoIslands {
+            get {
+                object obj = ResourceManager.GetObject("topo_map_ShigoIslands", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap topo_map_TheCenter {
             get {
                 object obj = ResourceManager.GetObject("topo_map_TheCenter", resourceCulture);
@@ -106,6 +136,26 @@ namespace ArkSavegameToolkitNet.Domain {
         public static System.Drawing.Bitmap topo_map_TheIsland {
             get {
                 object obj = ResourceManager.GetObject("topo_map_TheIsland", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap topo_map_TheVolcano {
+            get {
+                object obj = ResourceManager.GetObject("topo_map_TheVolcano", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap topo_map_Valguero_P {
+            get {
+                object obj = ResourceManager.GetObject("topo_map_Valguero_P", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
