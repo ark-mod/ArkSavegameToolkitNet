@@ -58,7 +58,7 @@ namespace ArkSavegameToolkitNet.Domain
                     { "TheCenter", Tuple.Create(center.Width, center.Height, -2.5f, 1f, 104.5f, 101f) },
                     { "ScorchedEarth_P", Tuple.Create(scorched.Width, scorched.Height, 7.2f, 7.2f, 92.8f, 92.8f) },
                     { "Aberration_P", Tuple.Create(aberration.Width, aberration.Height, 0.0f, 0.0f, 100.0f, 100.0f) },
-                    { "Extinction", Tuple.Create(extinction.Width, extinction.Height, -0f, -0f, 170f, 170f) },
+                    { "Extinction", Tuple.Create(extinction.Width, extinction.Height, 0f, 0f, 170f, 170f) },
                     { "Ragnarok", Tuple.Create(ragnarok.Width, ragnarok.Height, 0.0f, 0.0f, 100.0f, 100.0f) },
                     { "CrystalIsles", Tuple.Create(crystal.Width, crystal.Height, -1.7f, -1.5f, 99.3f, 101.0f) },
                     { "ShigoIslands", Tuple.Create(shigo.Width, shigo.Height, -2.0f, -1.6f, 99.8f, 101.0f) },
