@@ -6,12 +6,15 @@
     <title>ARK Savegame Toolkit .NET</title>
     <authors>tsebring</authors>
     <owners>tsebring</owners>
-    <licenseUrl>https://github.com/tsebring/ArkSavegameToolkitNet/blob/master/LICENSE.txt</licenseUrl>
+    <license type="expression">MIT</license>
     <projectUrl>https://github.com/tsebring/ArkSavegameToolkitNet</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Library for reading ARK Survival Evolved savegame files including easy to use .NET domain model.</description>
     <releaseNotes>NuGet package release</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>arksurvivalevolved ark survival evolved game-ark game extract-data save savegame toolkit net domain model wrapper linq querying</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.6.1" />
+    </dependencies>
   </metadata>
 </package>
