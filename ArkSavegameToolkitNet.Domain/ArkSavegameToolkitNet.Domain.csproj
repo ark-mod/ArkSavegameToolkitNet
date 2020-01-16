@@ -1,134 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DBF15752-CB8A-40D8-8DA6-2597538E86D0}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ArkSavegameToolkitNet.Domain</RootNamespace>
-    <AssemblyName>ArkSavegameToolkitNet.Domain</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFrameworks>net461</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyVersion>1.9.2.2</AssemblyVersion>
+    <FileVersion>1.9.2.2</FileVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Copyright>Copyright 2020</Copyright>
+    <PackageProjectUrl>https://github.com/tsebring/ArkSavegameToolkitNet</PackageProjectUrl>
+    <PackageTags>arksurvivalevolved ark survival evolved game-ark game extract-data save savegame toolkit net domain model wrapper linq querying</PackageTags>
+    <Authors>tsebring</Authors>
+    <Company>ARK Mod</Company>
+    <Version>2.0.0</Version>
+    <Description>A domain model wrapper for easily querying data in ARK Survival Evolved savegame files using .NET.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArkAnonymizeData.cs" />
-    <Compile Include="ArkCloudInventoryDino.cs" />
-    <Compile Include="ArkCloudInventoryCharacter.cs" />
-    <Compile Include="ArkCloudInventoryItem.cs" />
-    <Compile Include="ArkClusterData.cs" />
-    <Compile Include="ArkClusterDataResult.cs" />
-    <Compile Include="ArkGameData.cs" />
-    <Compile Include="ArkClusterDataBase.cs" />
-    <Compile Include="ArkGameDataBase.cs" />
-    <Compile Include="ArkClusterDataContainerBase.cs" />
-    <Compile Include="ArkGameDataContainerBase.cs" />
-    <Compile Include="ArkClusterDataUpdateResult.cs" />
-    <Compile Include="ArkGameDataUpdateResult.cs" />
-    <Compile Include="ArkItem.cs" />
-    <Compile Include="ArkItemTypeGroup.cs" />
-    <Compile Include="ArkPlayerExternal.cs" />
-    <Compile Include="ArkStructure.cs" />
-    <Compile Include="ArkCloudInventory.cs" />
-    <Compile Include="ArkStructureElectricGenerator.cs" />
-    <Compile Include="ArkStructureCropPlot.cs" />
-    <Compile Include="ArkTribe.cs" />
-    <Compile Include="ArkPlayer.cs" />
-    <Compile Include="ArkCreature.cs" />
-    <Compile Include="ArkTamedCreature.cs" />
-    <Compile Include="ArkLocation.cs" />
-    <Compile Include="ArkTamedCreatureAncestor.cs" />
-    <Compile Include="ArkWildCreature.cs" />
-    <Compile Include="DomainHelper.cs" />
-    <Compile Include="IArkClusterData.cs" />
-    <Compile Include="IArkGameData.cs" />
-    <Compile Include="IGameObjectExtensions.cs" />
-    <Compile Include="Internal\DictionaryExtensions.cs" />
-    <Compile Include="Internal\ExpandoObjectHelper.cs" />
-    <Compile Include="Internal\QueryableExtensions.cs" />
-    <Compile Include="Internal\StringExtensions.cs" />
-    <Compile Include="ISaveStateExtensions.cs" />
-    <Compile Include="MapResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MapResources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <ProjectReference Include="..\ArkSavegameToolkitNet\ArkSavegameToolkitNet.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="MapResources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>MapResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Scorched_Earth_Topographic_Map.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\The_Center_Topographic_Map.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\The_Island_Topographic_Map.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\license.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ArkSavegameToolkitNet\ArkSavegameToolkitNet.csproj">
-      <Project>{2b78ed8e-a311-49bd-b4ac-8787f829ad17}</Project>
-      <Name>ArkSavegameToolkitNet</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Ragnarok_Topographic_Map.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Aberration_Topographic_Map.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\topo_map_extinction.jpg" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -37,9 +37,8 @@
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -62,10 +61,6 @@
     <ProjectReference Include="..\ArkSavegameToolkitNet.Domain\ArkSavegameToolkitNet.Domain.csproj">
       <Project>{dbf15752-cb8a-40d8-8da6-2597538e86d0}</Project>
       <Name>ArkSavegameToolkitNet.Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ArkSavegameToolkitNet\ArkSavegameToolkitNet.csproj">
-      <Project>{2b78ed8e-a311-49bd-b4ac-8787f829ad17}</Project>
-      <Name>ArkSavegameToolkitNet</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
