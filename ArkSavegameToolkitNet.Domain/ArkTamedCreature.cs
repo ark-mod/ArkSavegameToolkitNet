@@ -193,6 +193,7 @@ namespace ArkSavegameToolkitNet.Domain
 
             _saveState = saveState;
 
+            IsCryo = creature.IsCryo;
             OwningPlayerId = creature.GetPropertyValue<int?>(_owningPlayerID);
             OwningPlayerName = creature.GetPropertyValue<string>(_owningPlayerName);
             Name = creature.GetPropertyValue<string>(_tamedName);

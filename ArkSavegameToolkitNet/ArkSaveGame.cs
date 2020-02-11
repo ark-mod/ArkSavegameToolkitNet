@@ -126,6 +126,95 @@ namespace ArkSavegameToolkitNet
 
             readBinary(_archive, _mmf);
 
+            //Now parse out cryo creature data
+            var cryoPodEntries = Objects.Where(o => o.ClassName.Name == "PrimalItem_WeaponEmptyCryopod_C" && o.GetProperty<PropertyArray>(ArkName.Create("CustomItemDatas")) != null).ToList();
+
+            IList<GameObject> cryoCreatureObjects = new List<GameObject>();
+
+            foreach(var cryoEntry in cryoPodEntries)
+            {
+                try
+                {
+                    var customData = cryoEntry.GetProperty<PropertyArray>(ArkName.Create("CustomItemDatas"));
+                    if (customData != null && customData.Value.Count > 0)
+                    {
+                        StructPropertyList customProperties = (StructPropertyList)customData.Value[0];
+                        var byteProperty = customProperties.GetProperty<PropertyStruct>("CustomDataBytes");
+                        if (byteProperty != null)
+                        {
+                            try
+                            {
+                                StructPropertyList byteArrayProperty = (StructPropertyList)byteProperty.Value;
+                                StructPropertyList byteArrayList = (StructPropertyList)byteArrayProperty.GetProperty<PropertyArray>("ByteArrays").Value[0];
+                                var byteList = byteArrayList.GetProperty<PropertyArray>("Bytes");
+                                var byteListValue = byteList.Value;
+
+                                //convert from sbytes to bytes 
+                                byte[] cryoDataBytes = new byte[byteListValue.Count];
+                                for (int i = 0; i < cryoDataBytes.Length; i++)
+                                {
+                                    int.TryParse(byteListValue[i].ToString(), out int byteValue);
+                                    cryoDataBytes[i] = (byte)byteValue;
+                                }
+
+                                //sucks but without quite a re-write it's easier to save to disk and read back as memorymappedfile
+                                string filePath = _fileName.Substring(0, _fileName.LastIndexOf(".")) + ".cryo";
+                                File.WriteAllBytes(filePath, cryoDataBytes);
+                                var fi = new FileInfo(filePath);
+                                var size = fi.Length;
+
+                                MemoryMappedFile cryoMmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, null, 0L, MemoryMappedFileAccess.Read);
+                                MemoryMappedViewAccessor cryoVa = cryoMmf.CreateViewAccessor(0L, 0L, MemoryMappedFileAccess.Read);
+
+                                ArkArchive cryoArchive = new ArkArchive(cryoVa, size, _arkNameCache, _arkStringCache, _exclusivePropertyNameTree);
+                                cryoArchive.GetBytes(4);
+
+                                var dino = new GameObject(cryoArchive);
+                                dino.ObjectId = Objects.Count + cryoCreatureObjects.Count +1 ;
+                                dino.IsCryo = true;
+
+                                var statusobject = new GameObject(cryoArchive);
+                                statusobject.ObjectId = Objects.Count + cryoCreatureObjects.Count + 2;
+
+                                dino.loadProperties(cryoArchive, new GameObject(), 0, null);
+                                var statusComponentRef = dino.GetProperty<PropertyObject>("MyCharacterStatusComponent");
+                                statusComponentRef.Value.ObjectId = statusobject.ObjectId;
+                                dino.properties.Remove(ArkName.Create("MyCharacterStatusComponent"));
+                                dino.properties.Add(ArkName.Create("MyCharacterStatusComponent"), statusComponentRef);
+
+                                statusobject.loadProperties(cryoArchive, new GameObject(), 0, null);
+                                
+
+                                cryoCreatureObjects.Add(dino);
+                                cryoCreatureObjects.Add(statusobject);
+
+                                cryoVa.Dispose();
+                                cryoMmf.Dispose();
+
+                                //remove temp cryo data file
+                                File.Delete(filePath);
+                            }
+                            finally
+                            {
+
+                            }
+                            
+
+                        }
+                    }
+
+                    foreach (var cryoCreatureObject in cryoCreatureObjects)
+                    {
+                        Objects.Add(cryoCreatureObject);
+                    }
+
+                }
+                catch 
+                { }
+
+            }
+
+
             return true;
         }
 
