@@ -153,14 +153,14 @@ namespace ArkSavegameToolkitNet
                             StructPropertyList byteArrayProperty = (StructPropertyList)byteProperty.Value;
                             StructPropertyList byteArrayList = (StructPropertyList)byteArrayProperty.GetProperty<PropertyArray>("ByteArrays").Value[0];
                             var byteList = byteArrayList.GetProperty<PropertyArray>("Bytes");
-                            var byteListValue = byteList.Value;
 
                             //convert from sbytes to bytes 
-                            byte[] cryoDataBytes = new byte[byteListValue.Count];
-                            for (int i = 0; i < cryoDataBytes.Length; i++)
+                            sbyte[] sbyteValues = new sbyte[byteList.Value.Count];
+                            for (int x = 0; x < byteList.Value.Count; x++)
                             {
-                                cryoDataBytes[i] = (byte)byteListValue[i];
+                                sbyteValues[x] = (sbyte)byteList.Value[x];
                             }
+                            byte[] cryoDataBytes = (byte[])(Array)sbyteValues;
 
                             //easier to save to disk and read back as memorymappedfile
                             string filePath = _fileName.Substring(0, _fileName.LastIndexOf(".")) + ".cryo";
