@@ -147,68 +147,62 @@ namespace ArkSavegameToolkitNet
                     StructPropertyList customProperties = (StructPropertyList)customData.Value[0];
                     var byteProperty = customProperties.GetProperty<PropertyStruct>("CustomDataBytes");
                     if (byteProperty != null)
-                    {
-                        try
+                {
+        
+                        StructPropertyList byteArrayProperty = (StructPropertyList)byteProperty.Value;
+                        StructPropertyList byteArrayList = (StructPropertyList)byteArrayProperty.GetProperty<PropertyArray>("ByteArrays").Value[0];
+                        var byteList = byteArrayList.GetProperty<PropertyArray>("Bytes");
+
+                        //convert from sbytes to bytes 
+                        sbyte[] sbyteValues = new sbyte[byteList.Value.Count];
+                        for (int x = 0; x < byteList.Value.Count; x++)
                         {
-                            StructPropertyList byteArrayProperty = (StructPropertyList)byteProperty.Value;
-                            StructPropertyList byteArrayList = (StructPropertyList)byteArrayProperty.GetProperty<PropertyArray>("ByteArrays").Value[0];
-                            var byteList = byteArrayList.GetProperty<PropertyArray>("Bytes");
+                            sbyteValues[x] = (sbyte)byteList.Value[x];
+                        }
+                        byte[] cryoDataBytes = (byte[])(Array)sbyteValues;
 
-                            //convert from sbytes to bytes 
-                            sbyte[] sbyteValues = new sbyte[byteList.Value.Count];
-                            for (int x = 0; x < byteList.Value.Count; x++)
+                        //easier to save to disk and read back as memorymappedfile
+                        string filePath = _fileName.Substring(0, _fileName.LastIndexOf(".")) + ".cryo";
+                        File.WriteAllBytes(filePath, cryoDataBytes);
+                        var fi = new FileInfo(filePath);
+                        var size = fi.Length;
+
+                        using (MemoryMappedFile cryoMmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, null, 0L, MemoryMappedFileAccess.Read))
+                        {
+                            using(MemoryMappedViewAccessor cryoVa = cryoMmf.CreateViewAccessor(0L, 0L, MemoryMappedFileAccess.Read))
                             {
-                                sbyteValues[x] = (sbyte)byteList.Value[x];
-                            }
-                            byte[] cryoDataBytes = (byte[])(Array)sbyteValues;
+                                ArkArchive cryoArchive = new ArkArchive(cryoVa, size, _arkNameCache, _arkStringCache, _exclusivePropertyNameTree);
+                                cryoArchive.GetBytes(4);
 
-                            //easier to save to disk and read back as memorymappedfile
-                            string filePath = _fileName.Substring(0, _fileName.LastIndexOf(".")) + ".cryo";
-                            File.WriteAllBytes(filePath, cryoDataBytes);
-                            var fi = new FileInfo(filePath);
-                            var size = fi.Length;
+                                nextObjectId++;
+                                var dino = new GameObject(cryoArchive);
+                                dino.ObjectId = nextObjectId;
+                                dino.IsCryo = true;
 
-                            using (MemoryMappedFile cryoMmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, null, 0L, MemoryMappedFileAccess.Read))
-                            {
-                                using(MemoryMappedViewAccessor cryoVa = cryoMmf.CreateViewAccessor(0L, 0L, MemoryMappedFileAccess.Read))
-                                {
-                                    ArkArchive cryoArchive = new ArkArchive(cryoVa, size, _arkNameCache, _arkStringCache, _exclusivePropertyNameTree);
-                                    cryoArchive.GetBytes(4);
+                                nextObjectId++;
+                                var statusobject = new GameObject(cryoArchive);
+                                statusobject.ObjectId = nextObjectId;
 
-                                    nextObjectId++;
-                                    var dino = new GameObject(cryoArchive);
-                                    dino.ObjectId = nextObjectId;
-                                    dino.IsCryo = true;
+                                dino.loadProperties(cryoArchive, new GameObject(), 0, null);
+                                var statusComponentRef = dino.GetProperty<PropertyObject>("MyCharacterStatusComponent");
+                                statusComponentRef.Value.ObjectId = statusobject.ObjectId;
+                                dino.properties.Remove(_myCharacterStatusComponent);
+                                dino.properties.Add(_myCharacterStatusComponent, statusComponentRef);
 
-                                    nextObjectId++;
-                                    var statusobject = new GameObject(cryoArchive);
-                                    statusobject.ObjectId = nextObjectId;
+                                statusobject.loadProperties(cryoArchive, new GameObject(), 0, null);
 
-                                    dino.loadProperties(cryoArchive, new GameObject(), 0, null);
-                                    var statusComponentRef = dino.GetProperty<PropertyObject>("MyCharacterStatusComponent");
-                                    statusComponentRef.Value.ObjectId = statusobject.ObjectId;
-                                    dino.properties.Remove(_myCharacterStatusComponent);
-                                    dino.properties.Add(_myCharacterStatusComponent, statusComponentRef);
+                                Objects.Add(dino);
+                                Objects.Add(statusobject);
 
-                                    statusobject.loadProperties(cryoArchive, new GameObject(), 0, null);
-
-                                    Objects.Add(dino);
-                                    Objects.Add(statusobject);
-
-                                    cryoVa.Dispose();
-                                }
-
-                                cryoMmf.Dispose();
+                                cryoVa.Dispose();
                             }
 
-                            //remove temp cryo data file
-                            File.Delete(filePath);
-
+                            cryoMmf.Dispose();
                         }
-                        finally
-                        {
 
-                        }
+                        //remove temp cryo data file
+                        File.Delete(filePath);
+
                     }
                 }
             }
