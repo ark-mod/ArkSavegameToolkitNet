@@ -301,6 +301,7 @@ namespace ArkSavegameToolkitNet.Domain
         public double? BabyNextCuddleTime { get; set; }
         public DateTime? BabyNextCuddleTimeApprox => _saveState?.GetApproxDateTimeOf(BabyNextCuddleTime);
         public bool IsNeutered { get; set; }
+        public bool IsCryo { get; set; }
         public ArkTamedCreatureAncestor[] DinoAncestors { get; set; }
         public ArkTamedCreatureAncestor[] DinoAncestorsMale { get; set; }
         public sbyte[] GestationEggColors { get; set; }
