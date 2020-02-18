@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ArkSavegameToolkitNet.Arrays
 {
-    public class ArkArrayByte : List<sbyte?>, IArkArray<sbyte?>
+    public class ArkArrayByte : List<byte?>, IArkArray<byte?>
     {
         public ArkArrayByte()
         {
@@ -23,13 +23,10 @@ namespace ArkSavegameToolkitNet.Arrays
                 throw new UnreadablePropertyException();
             }
 
-            for (int n = 0; n < size; n++)
-            {
-                Add(archive.GetByte());
-            }
+            AddRange(archive.GetBytes(size).Cast<byte?>().ToArray());
         }
 
-        public Type ValueClass => typeof(sbyte?);
+        public Type ValueClass => typeof(byte?);
 
         //public int calculateSize(bool nameTable)
         //{

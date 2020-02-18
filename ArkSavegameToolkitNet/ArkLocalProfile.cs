@@ -47,7 +47,7 @@ namespace ArkSavegameToolkitNet
             }
         }
         private GameObject _localprofile;
-        private sbyte[] unknownData;
+        private byte[] unknownData;
         private ArkNameCache _arkNameCache;
         private ArkNameTree _exclusivePropertyNameTree;
         private string _fileName;

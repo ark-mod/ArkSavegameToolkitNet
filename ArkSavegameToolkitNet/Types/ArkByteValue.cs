@@ -12,7 +12,7 @@ namespace ArkSavegameToolkitNet.Types
     {
         private bool _fromEnum;
 
-        private sbyte _byteValue;
+        private byte _byteValue;
 
         private ArkName _enumName;
 
@@ -20,7 +20,7 @@ namespace ArkSavegameToolkitNet.Types
 
         public ArkByteValue() { }
 
-        public ArkByteValue(sbyte byteValue)
+        public ArkByteValue(byte byteValue)
         {
             _fromEnum = false;
             _enumName = ArkName.NONE_NAME;
@@ -47,7 +47,7 @@ namespace ArkSavegameToolkitNet.Types
         public bool FromEnum => _fromEnum;
 
         [JsonProperty]
-        public sbyte ByteValue
+        public byte ByteValue
         {
             get
             {
@@ -67,12 +67,7 @@ namespace ArkSavegameToolkitNet.Types
             _enumName = enumName;
             _nameValue = nameValue;
         }
-
-        //public int getSize(bool nameTable)
-        //{
-        //    return _fromEnum ? ArkArchive.GetNameLength(_nameValue, nameTable) : 1;
-        //}
-
+        
         public void read(ArkArchive archive, ArkName enumName, bool propertyIsExcluded = false)
         {
             _enumName = enumName;
@@ -88,12 +83,6 @@ namespace ArkSavegameToolkitNet.Types
                 else _byteValue = archive.GetByte();
             }
         }
-
-        //public void CollectNames(ISet<string> nameTable)
-        //{
-        //    nameTable.Add(_enumName.Name);
-        //    if (_fromEnum) nameTable.Add(_nameValue.Name);
-        //}
 
         public TypeCode GetTypeCode()
         {
@@ -112,42 +101,44 @@ namespace ArkSavegameToolkitNet.Types
 
         public sbyte ToSByte(IFormatProvider provider)
         {
-            return ByteValue;
+            var sbyteArray = new sbyte[1];
+            Buffer.BlockCopy(new[] { ByteValue }, 0, sbyteArray, 0, 1);
+            return sbyteArray[0];
         }
 
         public byte ToByte(IFormatProvider provider)
         {
-            return (byte)ByteValue;
+            return ByteValue;
         }
 
         public short ToInt16(IFormatProvider provider)
         {
-            return (short)ByteValue;
+            return ByteValue;
         }
 
         public ushort ToUInt16(IFormatProvider provider)
         {
-            return (ushort)ByteValue;
+            return ByteValue;
         }
 
         public int ToInt32(IFormatProvider provider)
         {
-            return (int)ByteValue;
+            return ByteValue;
         }
 
         public uint ToUInt32(IFormatProvider provider)
         {
-            return (uint)ByteValue;
+            return ByteValue;
         }
 
         public long ToInt64(IFormatProvider provider)
         {
-            return (long)ByteValue;
+            return ByteValue;
         }
 
         public ulong ToUInt64(IFormatProvider provider)
         {
-            return (ulong)ByteValue;
+            return ByteValue;
         }
 
         public float ToSingle(IFormatProvider provider)

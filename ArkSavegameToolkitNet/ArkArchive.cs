@@ -254,11 +254,7 @@ namespace ArkSavegameToolkitNet
         public int GetInt(long position)
         {
             const long size = 4;
-            if (position + size > _size)
-            {
-                _logger.Error($"Trying to read {size} bytes at {position:X} with just {_size - position} bytes left");
-                throw new OverflowException();
-            }
+            CheckForOverflow(size);
 
             var value = _va.ReadInt32(position);
 
@@ -268,27 +264,18 @@ namespace ArkSavegameToolkitNet
         public int GetInt()
         {
             const long size = 4;
-            if (_position + size > _size)
-            {
-                _logger.Error($"Trying to read {size} bytes at {_position:X} with just {_size - _position} bytes left");
-                throw new OverflowException();
-            }
+            CheckForOverflow(size);
 
             var value = _va.ReadInt32(_position);
             _position += size;
 
             return value;
         }
-
-        public sbyte[] GetBytes(int length)
+        
+        public byte[] GetBytes(int length)
         {
-            var buffer = new sbyte[length];
-
-            if (_position + length > _size)
-            {
-                _logger.Error($"Trying to read {length} bytes at {_position:X} with just {_size - _position} bytes left");
-                throw new OverflowException();
-            }
+            var buffer = new byte[length];
+            CheckForOverflow(length);
 
             var value = _va.ReadArray(_position, buffer, 0, length);
             _position += length;
@@ -296,14 +283,32 @@ namespace ArkSavegameToolkitNet
             return buffer;
         }
 
-        public sbyte GetByte()
+        public byte GetByte()
         {
             const long size = 1;
-            if (_position + size > _size)
-            {
-                _logger.Error($"Trying to read {size} bytes at {_position:X} with just {_size - _position} bytes left");
-                throw new OverflowException();
-            }
+            CheckForOverflow(size);
+
+            var value = _va.ReadByte(_position);
+            _position += size;
+
+            return value;
+        }
+
+        public sbyte[] GetSBytes(int length)
+        {
+            var buffer = new sbyte[length];
+            CheckForOverflow(length);
+
+            var value = _va.ReadArray(_position, buffer, 0, length);
+            _position += length;
+
+            return buffer;
+        }
+
+        public sbyte GetSByte()
+        {
+            const long size = 1;
+            CheckForOverflow(size);
 
             var value = _va.ReadSByte(_position);
             _position += size;
@@ -314,11 +319,7 @@ namespace ArkSavegameToolkitNet
         public long GetLong()
         {
             const long size = 8;
-            if (_position + size > _size)
-            {
-                _logger.Error($"Trying to read {size} bytes at {_position:X} with just {_size - _position} bytes left");
-                throw new OverflowException();
-            }
+            CheckForOverflow(size);
 
             var value = _va.ReadInt64(_position);
             _position += size;
@@ -329,11 +330,7 @@ namespace ArkSavegameToolkitNet
         public short GetShort()
         {
             const long size = 2;
-            if (_position + size > _size)
-            {
-                _logger.Error($"Trying to read {size} bytes at {_position:X} with just {_size - _position} bytes left");
-                throw new OverflowException();
-            }
+            CheckForOverflow(size);
 
             var value = _va.ReadInt16(_position);
             _position += size;
@@ -344,11 +341,7 @@ namespace ArkSavegameToolkitNet
         public double GetDouble()
         {
             const long size = 8;
-            if (_position + size > _size)
-            {
-                _logger.Error($"Trying to read {size} bytes at {_position:X} with just {_size - _position} bytes left");
-                throw new OverflowException();
-            }
+            CheckForOverflow(size);
 
             var value = _va.ReadDouble(_position);
             _position += size;
@@ -359,11 +352,7 @@ namespace ArkSavegameToolkitNet
         public float GetFloat()
         {
             const long size = 4;
-            if (_position + size > _size)
-            {
-                _logger.Error($"Trying to read {size} bytes at {_position:X} with just {_size - _position} bytes left");
-                throw new OverflowException();
-            }
+            CheckForOverflow(size);
 
             var value = _va.ReadSingle(_position);
             _position += size;
@@ -377,6 +366,15 @@ namespace ArkSavegameToolkitNet
             if (val < 0 || val > 1) _logger.Warn($"Boolean at {_position:X} with value {val}, returning true.");
 
             return val != 0;
+        }
+
+        private void CheckForOverflow(long size)
+        {
+            if (_position + size > _size)
+            {
+                _logger.Error($"Trying to read {size} bytes at {_position:X} with just {_size - _position} bytes left");
+                throw new OverflowException();
+            }
         }
     }
 }

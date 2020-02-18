@@ -12,19 +12,19 @@ namespace ArkSavegameToolkitNet.Structs
     public class StructColor : StructBase
     {
         [JsonProperty]
-        public sbyte B { get; set; }
+        public byte B { get; set; }
         [JsonProperty]
-        public sbyte G { get; set; }
+        public byte G { get; set; }
         [JsonProperty]
-        public sbyte R { get; set; }
+        public byte R { get; set; }
         [JsonProperty]
-        public sbyte A { get; set; }
+        public byte A { get; set; }
 
         public StructColor(ArkName structType) : base(structType)
         {
         }
 
-        public StructColor(ArkName structType, sbyte b, sbyte g, sbyte r, sbyte a) : base(structType)
+        public StructColor(ArkName structType, byte b, byte g, byte r, byte a) : base(structType)
         {
             B = b;
             G = g;
@@ -34,11 +34,11 @@ namespace ArkSavegameToolkitNet.Structs
 
         public StructColor(ArkArchive archive, ArkName structType) : base(structType)
         {
-
-            B = archive.GetByte();
-            G = archive.GetByte();
-            R = archive.GetByte();
-            A = archive.GetByte();
+            var BGRA = archive.GetBytes(4);
+            B = BGRA[0];
+            G = BGRA[1];
+            R = BGRA[2];
+            A = BGRA[3];
         }
 
         //public override int getSize(bool nameTable)

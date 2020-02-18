@@ -11,7 +11,7 @@ namespace ArkSavegameToolkitNet.Types
     public class EmbeddedData
     {
         [JsonProperty]
-        public virtual sbyte[][][] Data { get; set; }
+        public virtual byte[][][] Data { get; set; }
         [JsonProperty]
         public string Path { get; set; }
 
@@ -54,11 +54,11 @@ namespace ArkSavegameToolkitNet.Types
 
             var partCount = archive.GetInt();
 
-            Data = new sbyte[partCount][][];
+            Data = new byte[partCount][][];
             for (var part = 0; part < partCount; part++)
             {
                 var blobCount = archive.GetInt();
-                var partData = new sbyte[blobCount][];
+                var partData = new byte[blobCount][];
 
                 for (var blob = 0; blob < blobCount; blob++)
                 {

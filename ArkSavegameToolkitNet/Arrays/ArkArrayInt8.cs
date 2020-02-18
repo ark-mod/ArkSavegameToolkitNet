@@ -17,10 +17,7 @@ namespace ArkSavegameToolkitNet.Arrays
             var size = archive.GetInt();
             Capacity = size;
 
-            for (int n = 0; n < size; n++)
-            {
-                this.Add(archive.GetByte());
-            }
+            AddRange(archive.GetSBytes(size).Cast<sbyte?>().ToArray());
         }
 
         public Type ValueClass => typeof(sbyte?);
