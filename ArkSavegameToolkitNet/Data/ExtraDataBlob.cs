@@ -11,7 +11,7 @@ namespace ArkSavegameToolkitNet.Data
     public class ExtraDataBlob : IExtraData
     {
         [JsonProperty]
-        public sbyte[] Data { get; set; }
+        public byte[] Data { get; set; }
 
         //public int calculateSize(bool nameTable)
         //{

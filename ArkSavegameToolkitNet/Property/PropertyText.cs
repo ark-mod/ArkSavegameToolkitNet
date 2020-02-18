@@ -24,7 +24,7 @@ namespace ArkSavegameToolkitNet.Property
                 return;
             }
 
-            _value = System.Convert.ToBase64String((byte[])(Array)archive.GetBytes(DataSize));
+            _value = Convert.ToBase64String(archive.GetBytes(DataSize));
         }
 
         //public override Type ValueClass => typeof(string);

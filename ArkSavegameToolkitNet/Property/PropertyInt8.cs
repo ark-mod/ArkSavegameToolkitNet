@@ -24,7 +24,7 @@ namespace ArkSavegameToolkitNet.Property
                 return;
             }
 
-            _value = archive.GetByte();
+            _value = archive.GetSByte();
         }
 
         //public override Type ValueClass => typeof(sbyte?);
