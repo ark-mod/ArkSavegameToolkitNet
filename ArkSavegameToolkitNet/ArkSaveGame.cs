@@ -19,8 +19,12 @@ namespace ArkSavegameToolkitNet
     public class ArkSavegame : IGameObjectContainer, IDisposable
     {
         private static ILog _logger = LogManager.GetLogger(typeof(ArkSavegame));
-        private static ArkName _customItemData = ArkName.Create("CustomItemDatas");
-        private static ArkName _myCharacterStatusComponent = ArkName.Create("MyCharacterStatusComponent");
+
+        private static readonly ArkName _customItemData = ArkName.Create("CustomItemDatas");
+        private static readonly ArkName _myCharacterStatusComponent = ArkName.Create("MyCharacterStatusComponent");
+        private static readonly ArkName _customDataBytesIdentifier = ArkName.Create("CustomDataBytes");
+        private static readonly ArkName _byteArraysIdentifier = ArkName.Create("ByteArrays");
+        private static readonly ArkName _bytesIdentifier = ArkName.Create("Bytes");
 
         [JsonProperty]
         public IList<GameObject> Objects
@@ -129,86 +133,92 @@ namespace ArkSavegameToolkitNet
             //}
 
             readBinary(_archive, _mmf);
+            var result = LoadCryopodEntries();
+
+            return result;
+        }
 
 
-
+        private bool LoadCryopodEntries() { 
             //Now parse out cryo creature data
+
+            var cryoPodEntries = Objects.Where(WhereEmptyCryopodHasCustomItemDataBytesArrayBytes)
+                .Select(SelectCustomDataBytesArrayBytes)
+                .ToList();
+
+
+            //string filePathWithoutExtension = _fileName.Substring(0, _fileName.LastIndexOf("."));
+            //string fileExtension = "cryo";
+            //string filePath = string.Join(".", filePathWithoutExtension, fileExtension);
+
             int nextObjectId = Objects.Count();
-            var cryoPodEntries = Objects.Where(o => o.ClassName.Name == "PrimalItem_WeaponEmptyCryopod_C" && o.GetProperty<PropertyArray>(_customItemData) != null).ToList();
-
-            IList<GameObject> cryoCreatureObjects = new List<GameObject>();
-
-            foreach(var cryoEntry in cryoPodEntries)
+            foreach (var byteList in cryoPodEntries)
             {
 
-                var customData = cryoEntry.GetProperty<PropertyArray>(_customItemData);
-                if (customData != null && customData.Value.Count > 0)
+                // TODO: this should be casted to byte array (.Cast<byte>().ToArray()) after ArkByteValue, and ArkArchive, sbyte to byte changes are made
+                // convert from sbytes to bytes 
+                sbyte[] sbyteValues = byteList.Value.Cast<sbyte>().ToArray();
+                byte[] cryoDataBytes = (byte[])(Array)sbyteValues;
+
+                //easier to save to disk and read back as memorymappedfile
+                var filePath = Path.GetTempFileName();
+                File.WriteAllBytes(filePath, cryoDataBytes);
+                var fi = new FileInfo(filePath);
+
+                using (MemoryMappedFile cryoMmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, null, 0L, MemoryMappedFileAccess.Read))
+                using (MemoryMappedViewAccessor cryoVa = cryoMmf.CreateViewAccessor(0L, 0L, MemoryMappedFileAccess.Read))
                 {
-                    StructPropertyList customProperties = (StructPropertyList)customData.Value[0];
-                    var byteProperty = customProperties.GetProperty<PropertyStruct>("CustomDataBytes");
-                    if (byteProperty != null)
-                {
-        
-                        StructPropertyList byteArrayProperty = (StructPropertyList)byteProperty.Value;
-                        StructPropertyList byteArrayList = (StructPropertyList)byteArrayProperty.GetProperty<PropertyArray>("ByteArrays").Value[0];
-                        var byteList = byteArrayList.GetProperty<PropertyArray>("Bytes");
+                    ArkArchive cryoArchive = new ArkArchive(cryoVa, fi.Length, _arkNameCache, _arkStringCache, _exclusivePropertyNameTree);
 
-                        //convert from sbytes to bytes 
-                        sbyte[] sbyteValues = new sbyte[byteList.Value.Count];
-                        for (int x = 0; x < byteList.Value.Count; x++)
-                        {
-                            sbyteValues[x] = (sbyte)byteList.Value[x];
-                        }
-                        byte[] cryoDataBytes = (byte[])(Array)sbyteValues;
+                    var result = UpdateCryoCreatureStatus(cryoArchive);
 
-                        //easier to save to disk and read back as memorymappedfile
-                        string filePath = _fileName.Substring(0, _fileName.LastIndexOf(".")) + ".cryo";
-                        File.WriteAllBytes(filePath, cryoDataBytes);
-                        var fi = new FileInfo(filePath);
-                        var size = fi.Length;
-
-                        using (MemoryMappedFile cryoMmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, null, 0L, MemoryMappedFileAccess.Read))
-                        {
-                            using(MemoryMappedViewAccessor cryoVa = cryoMmf.CreateViewAccessor(0L, 0L, MemoryMappedFileAccess.Read))
-                            {
-                                ArkArchive cryoArchive = new ArkArchive(cryoVa, size, _arkNameCache, _arkStringCache, _exclusivePropertyNameTree);
-                                cryoArchive.GetBytes(4);
-
-                                nextObjectId++;
-                                var dino = new GameObject(cryoArchive);
-                                dino.ObjectId = nextObjectId;
-                                dino.IsCryo = true;
-
-                                nextObjectId++;
-                                var statusobject = new GameObject(cryoArchive);
-                                statusobject.ObjectId = nextObjectId;
-
-                                dino.loadProperties(cryoArchive, new GameObject(), 0, null);
-                                var statusComponentRef = dino.GetProperty<PropertyObject>("MyCharacterStatusComponent");
-                                statusComponentRef.Value.ObjectId = statusobject.ObjectId;
-                                dino.properties.Remove(_myCharacterStatusComponent);
-                                dino.properties.Add(_myCharacterStatusComponent, statusComponentRef);
-
-                                statusobject.loadProperties(cryoArchive, new GameObject(), 0, null);
-
-                                Objects.Add(dino);
-                                Objects.Add(statusobject);
-
-                                cryoVa.Dispose();
-                            }
-
-                            cryoMmf.Dispose();
-                        }
-
-                        //remove temp cryo data file
-                        File.Delete(filePath);
-
-                    }
+                    Objects.Add(result.Item1);
+                    Objects.Add(result.Item2);
                 }
+
+                //remove temp (cryo data) file
+                File.Delete(filePath);
             }
 
 
             return true;
+
+            bool WhereEmptyCryopodHasCustomItemDataBytesArrayBytes(GameObject o) => o.ClassName.Name == "PrimalItem_WeaponEmptyCryopod_C" 
+                && o.GetProperty<PropertyArray>(_customItemData)?.Value[0] is StructPropertyList customProperties
+                && customProperties.GetProperty<PropertyStruct>(_customDataBytesIdentifier) is PropertyStruct customDataBytes
+                && customDataBytes.Value is StructPropertyList byteArrays
+                && byteArrays.GetProperty<PropertyArray>(_byteArraysIdentifier)?.Value[0] is StructPropertyList bytes
+                && bytes.GetProperty<PropertyArray>(_bytesIdentifier) is PropertyArray byteList
+                && byteList.Value.Count > 0;
+
+            PropertyArray SelectCustomDataBytesArrayBytes(GameObject o) => ((StructPropertyList)((StructPropertyList)((StructPropertyList)o.GetProperty<PropertyArray>(_customItemData).Value[0]).GetProperty<PropertyStruct>(_customDataBytesIdentifier).Value).GetProperty<PropertyArray>(_byteArraysIdentifier).Value[0]).GetProperty<PropertyArray>(_bytesIdentifier);
+
+            Tuple<GameObject, GameObject> UpdateCryoCreatureStatus(ArkArchive cryoArchive) {
+                cryoArchive.GetBytes(4);
+
+                nextObjectId++;
+                var dino = new GameObject(cryoArchive)
+                {
+                    ObjectId = nextObjectId,
+                    IsCryo = true
+                };
+
+                nextObjectId++;
+                var statusobject = new GameObject(cryoArchive)
+                {
+                    ObjectId = nextObjectId
+                };
+
+                dino.loadProperties(cryoArchive, new GameObject(), 0, null);
+                var statusComponentRef = dino.GetProperty<PropertyObject>(_myCharacterStatusComponent);
+                statusComponentRef.Value.ObjectId = statusobject.ObjectId;
+                dino.properties.Remove(_myCharacterStatusComponent);
+                dino.properties.Add(_myCharacterStatusComponent, statusComponentRef);
+
+                statusobject.loadProperties(cryoArchive, new GameObject(), 0, null);
+                return new Tuple<GameObject, GameObject>(dino, statusobject);
+            }
+
         }
 
         public GameObject GetObjectAtOffset(long offset, int nextPropertiesOffset)
