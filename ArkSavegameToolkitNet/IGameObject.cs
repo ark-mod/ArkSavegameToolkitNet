@@ -17,6 +17,7 @@ namespace ArkSavegameToolkitNet
         Guid Uuid { get; set; }
 
         //query helper fields
+        bool IsCryo { get; set; }
         bool IsCreature { get; }
         bool IsTamedCreature { get; }
         bool IsWildCreature { get; }

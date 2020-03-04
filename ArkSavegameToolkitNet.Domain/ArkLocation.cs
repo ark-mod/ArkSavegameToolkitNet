@@ -26,8 +26,8 @@ namespace ArkSavegameToolkitNet.Domain
             { "TheVolcano", Tuple.Create(50.0f, 9181.0f, 50.0f, 9181.0f) },
             { "PGARK", Tuple.Create(0.0f, 6080.0f, 0.0f, 6080.0f) },
             { "CrystalIsles" , Tuple.Create(50.0f, 13718.0f, 50.0f, 13718.0f) },
-            { "Valguero_P" , Tuple.Create(50.0f, 8161.0f, 50.0f, 8161.0f) }
-            
+            { "Valguero_P" , Tuple.Create(50.0f, 8161.0f, 50.0f, 8161.0f) },
+            { "Genesis", Tuple.Create(50.0f, 10500.0f, 50.0f, 10500.0f)}
         };
 
         //width, height, latitude-top, longitude-left, longitude-right, latitude-bottom
@@ -36,7 +36,7 @@ namespace ArkSavegameToolkitNet.Domain
 
         static ArkLocation()
         {
-            System.Drawing.Bitmap island = null, center = null, scorched = null, ragnarok = null, aberration = null, extinction = null, crystal = null, shigo = null, volcano = null, valguero = null;
+            System.Drawing.Bitmap island = null, center = null, scorched = null, ragnarok = null, aberration = null, extinction = null, crystal = null, shigo = null, volcano = null, valguero = null, genesis = null;
             try
             {
                 island = MapResources.topo_map_TheIsland;
@@ -49,6 +49,8 @@ namespace ArkSavegameToolkitNet.Domain
                 shigo = MapResources.topo_map_ShigoIslands;
                 volcano = MapResources.topo_map_TheVolcano;
                 valguero = MapResources.topo_map_Valguero_P;
+                genesis = MapResources.topo_map_Genesis;
+                
 
                 //painted-maps are divided into a 10x10 grid, lacking precise offsets and should instead align with the grid (0.0f, 0.0f, 100.0f, 100.0f)
                 //topo-maps offsets are calculated using two easily identifiable points on the map and reversing the formula for TopoMapX/TopoMapY val-2.95f, 0.0f, 86.3f, 89.0f
@@ -63,7 +65,9 @@ namespace ArkSavegameToolkitNet.Domain
                     { "CrystalIsles", Tuple.Create(crystal.Width, crystal.Height, -1.7f, -1.5f, 99.3f, 101.0f) },
                     { "ShigoIslands", Tuple.Create(shigo.Width, shigo.Height, -2.0f, -1.6f, 99.8f, 101.0f) },
                     { "TheVolcano", Tuple.Create(volcano.Width, volcano.Height, -1.95f, -1.3f, 99.5f, 100.7f) },
-                    { "Valguero_P", Tuple.Create(valguero.Width, valguero.Height, -10.0f, -10.0f, 110.0f, 110.0f) }
+                    { "Valguero_P", Tuple.Create(valguero.Width, valguero.Height, -10.0f, -10.0f, 110.0f, 110.0f) },
+                    { "Genesis", Tuple.Create(genesis.Width, genesis.Height, 0.0f, 0.0f, 100.0f, 100.0f) }
+
                 };
             }
             finally
@@ -78,6 +82,7 @@ namespace ArkSavegameToolkitNet.Domain
                 shigo?.Dispose();
                 volcano?.Dispose();
                 valguero?.Dispose();
+                genesis?.Dispose();
             }
         }
 

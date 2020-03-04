@@ -22,6 +22,7 @@ namespace ArkSavegameToolkitNet.Domain
         //private static readonly ArkName _tameIneffectivenessModifier = ArkName.Create("TameIneffectivenessModifier");
         private static readonly ArkName _tamerString = ArkName.Create("TamerString");
         private static readonly ArkName _targetingTeam = ArkName.Create("TargetingTeam");
+        private static readonly ArkName _tamingTeamId = ArkName.Create("TamingTeamID"); //genesis
         private static readonly ArkName _tribeName = ArkName.Create("TribeName");
         private static readonly ArkName _lastUpdatedGestationAtTime = ArkName.Create("LastUpdatedGestationAtTime");
         private static readonly ArkName _lastUpdatedMatingAtTime = ArkName.Create("_lastUpdatedMatingAtTime");
@@ -193,12 +194,22 @@ namespace ArkSavegameToolkitNet.Domain
 
             _saveState = saveState;
 
+            IsCryo = creature.IsCryo;
             OwningPlayerId = creature.GetPropertyValue<int?>(_owningPlayerID);
             OwningPlayerName = creature.GetPropertyValue<string>(_owningPlayerName);
             Name = creature.GetPropertyValue<string>(_tamedName);
             TamedOnServerName = creature.GetPropertyValue<string>(_tamedOnServerName);
             TamerName = creature.GetPropertyValue<string>(_tamerString);
-            TargetingTeam = creature.GetPropertyValue<int>(_targetingTeam);
+
+            if (creature.Properties.ContainsKey(_tamingTeamId)) //genesis
+            {
+                TargetingTeam = creature.GetPropertyValue<int>(_tamingTeamId);
+            }
+            else
+            {
+                TargetingTeam = creature.GetPropertyValue<int>(_targetingTeam);
+            }
+
             TribeName = creature.GetPropertyValue<string>(_tribeName);
             RandomMutationsMale = creature.GetPropertyValue<int?>(_randomMutationsMale) ?? 0;
             RandomMutationsFemale = creature.GetPropertyValue<int?>(_randomMutationsFemale) ?? 0;
@@ -300,6 +311,7 @@ namespace ArkSavegameToolkitNet.Domain
         public double? BabyNextCuddleTime { get; set; }
         public DateTime? BabyNextCuddleTimeApprox => _saveState?.GetApproxDateTimeOf(BabyNextCuddleTime);
         public bool IsNeutered { get; set; }
+        public bool IsCryo { get; set; }
         public ArkTamedCreatureAncestor[] DinoAncestors { get; set; }
         public ArkTamedCreatureAncestor[] DinoAncestorsMale { get; set; }
         public sbyte[] GestationEggColors { get; set; }

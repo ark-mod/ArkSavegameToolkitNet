@@ -20,6 +20,7 @@ namespace ArkSavegameToolkitNet.Domain
         private static readonly ArkName _playerDataID = ArkName.Create("PlayerDataID");
         private static readonly ArkName _uniqueID = ArkName.Create("UniqueID"); 
         private static readonly ArkName _tribeID = ArkName.Create("TribeID");
+        private static readonly ArkName _tribeId = ArkName.Create("TribeId");
         private static readonly ArkName _playerName = ArkName.Create("PlayerName");
         private static readonly ArkName _savedNetworkAddress = ArkName.Create("SavedNetworkAddress");
         private static readonly ArkName _bIsFemale = ArkName.Create("bIsFemale");
@@ -163,6 +164,10 @@ namespace ArkSavegameToolkitNet.Domain
             Id = (int)mydata.GetPropertyValue<ulong>(_playerDataID);
             SteamId = mydata.GetPropertyValue<StructUniqueNetIdRepl>(_uniqueID)?.NetId;
             TribeId = mydata.GetPropertyValue<int?>(_tribeID);
+            if (TribeId == null)
+            {
+                TribeId = mydata.GetPropertyValue<int?>(_tribeId); //genesis
+            }
             Name = mydata.GetPropertyValue<string>(_playerName);
             SavedNetworkAddress = mydata.GetPropertyValue<string>(_savedNetworkAddress);
             CharacterName = myPlayerCharacterConfig.GetPropertyValue<string>(_playerCharacterName);
