@@ -37,6 +37,15 @@ namespace ArkSavegameToolkitNet.TestConsoleApp
                 Console.WriteLine($@"Elapsed (gd-apply) {st.ElapsedMilliseconds:N0} ms");
 
                 Console.WriteLine("Save data loaded!");
+
+
+                if (gd.TamedCreatures != null)
+                {
+                    long cryoCreatureCount = gd.TamedCreatures.LongCount(c => c.IsCryo);
+                    Console.WriteLine(cryoCreatureCount + " cryo creatures loaded.");
+                }
+
+
             }
             else
             {

@@ -16,6 +16,7 @@ namespace ArkSavegameToolkitNet.Domain
         private static readonly ArkName _tribeData = ArkName.Create("TribeData");
         private static readonly ArkName _tribeName = ArkName.Create("TribeName");
         private static readonly ArkName _tribeID = ArkName.Create("TribeID");
+        private static readonly ArkName _tribeId = ArkName.Create("TribeId"); //genesis
         private static readonly ArkName _tribeLog = ArkName.Create("TribeLog");
         private static readonly ArkName _ownerPlayerDataID = ArkName.Create("OwnerPlayerDataID");
         private static readonly ArkName _membersPlayerDataID = ArkName.Create("MembersPlayerDataID");
@@ -30,6 +31,7 @@ namespace ArkSavegameToolkitNet.Domain
                 {
                     { _tribeName, null },
                     { _tribeID, null },
+                    { _tribeId, null},
                     { _tribeLog, null },
                     { _ownerPlayerDataID, null },
                     { _membersPlayerDataID, null },
@@ -78,6 +80,10 @@ namespace ArkSavegameToolkitNet.Domain
 
             var tribeData = tribe.GetPropertyValue<StructPropertyList>(_tribeData);
             Id = tribeData.GetPropertyValue<int>(_tribeID);
+            if (Id == 0)
+            {
+                Id = tribeData.GetPropertyValue<int>(_tribeId); //Genesis changed case to use TribeId
+            }
             Name = tribeData.GetPropertyValue<string>(_tribeName);
             OwnerPlayerId = tribeData.GetPropertyValue<int>(_ownerPlayerDataID);
             MemberIds = tribeData.GetPropertyValue<ArkArrayInteger>(_membersPlayerDataID)?.Where(x => x != null).Select(x => x.Value).ToArray() ?? new int[] {};

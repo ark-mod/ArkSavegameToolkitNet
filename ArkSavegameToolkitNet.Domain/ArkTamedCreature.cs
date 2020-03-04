@@ -22,6 +22,7 @@ namespace ArkSavegameToolkitNet.Domain
         //private static readonly ArkName _tameIneffectivenessModifier = ArkName.Create("TameIneffectivenessModifier");
         private static readonly ArkName _tamerString = ArkName.Create("TamerString");
         private static readonly ArkName _targetingTeam = ArkName.Create("TargetingTeam");
+        private static readonly ArkName _tamingTeamId = ArkName.Create("TamingTeamID"); //genesis
         private static readonly ArkName _tribeName = ArkName.Create("TribeName");
         private static readonly ArkName _lastUpdatedGestationAtTime = ArkName.Create("LastUpdatedGestationAtTime");
         private static readonly ArkName _lastUpdatedMatingAtTime = ArkName.Create("_lastUpdatedMatingAtTime");
@@ -199,7 +200,16 @@ namespace ArkSavegameToolkitNet.Domain
             Name = creature.GetPropertyValue<string>(_tamedName);
             TamedOnServerName = creature.GetPropertyValue<string>(_tamedOnServerName);
             TamerName = creature.GetPropertyValue<string>(_tamerString);
-            TargetingTeam = creature.GetPropertyValue<int>(_targetingTeam);
+
+            if (creature.Properties.ContainsKey(_tamingTeamId)) //genesis
+            {
+                TargetingTeam = creature.GetPropertyValue<int>(_tamingTeamId);
+            }
+            else
+            {
+                TargetingTeam = creature.GetPropertyValue<int>(_targetingTeam);
+            }
+
             TribeName = creature.GetPropertyValue<string>(_tribeName);
             RandomMutationsMale = creature.GetPropertyValue<int?>(_randomMutationsMale) ?? 0;
             RandomMutationsFemale = creature.GetPropertyValue<int?>(_randomMutationsFemale) ?? 0;

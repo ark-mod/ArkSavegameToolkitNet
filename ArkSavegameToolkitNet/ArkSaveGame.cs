@@ -183,13 +183,13 @@ namespace ArkSavegameToolkitNet
 
             return true;
 
-            bool WhereEmptyCryopodHasCustomItemDataBytesArrayBytes(GameObject o) => o.ClassName.Name == "PrimalItem_WeaponEmptyCryopod_C" 
+            bool WhereEmptyCryopodHasCustomItemDataBytesArrayBytes(GameObject o) => o.ClassName.Name == "PrimalItem_WeaponEmptyCryopod_C"
                 && o.GetProperty<PropertyArray>(_customItemData)?.Value[0] is StructPropertyList customProperties
                 && customProperties.GetProperty<PropertyStruct>(_customDataBytesIdentifier) is PropertyStruct customDataBytes
                 && customDataBytes.Value is StructPropertyList byteArrays
-                && byteArrays.GetProperty<PropertyArray>(_byteArraysIdentifier)?.Value[0] is StructPropertyList bytes
-                && bytes.GetProperty<PropertyArray>(_bytesIdentifier) is PropertyArray byteList
-                && byteList.Value.Count > 0;
+                && byteArrays.GetProperty<PropertyArray>(_byteArraysIdentifier)?.Value.Count > 0 && byteArrays.GetProperty<PropertyArray>(_byteArraysIdentifier)?.Value[0] is StructPropertyList bytes
+                && bytes != null && bytes.GetProperty<PropertyArray>(_bytesIdentifier) is PropertyArray byteList
+                && byteList != null && byteList.Value.Count > 0; //added further checks to prevent NRE.
 
             PropertyArray SelectCustomDataBytesArrayBytes(GameObject o) => ((StructPropertyList)((StructPropertyList)((StructPropertyList)o.GetProperty<PropertyArray>(_customItemData).Value[0]).GetProperty<PropertyStruct>(_customDataBytesIdentifier).Value).GetProperty<PropertyArray>(_byteArraysIdentifier).Value[0]).GetProperty<PropertyArray>(_bytesIdentifier);
 
