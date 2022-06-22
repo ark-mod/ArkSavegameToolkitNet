@@ -68,7 +68,7 @@
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="3.1.1" />
     <PackageReference Include="Nerdbank.Streams" Version="2.4.50" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <WeaverFiles Include="$(SolutionDir)Weavers.Fody\bin\$(Configuration)\netstandard2.0\Weavers.Fody.dll" />
   </ItemGroup>
